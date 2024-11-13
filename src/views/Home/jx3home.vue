@@ -5,6 +5,8 @@
     <p><span style="color: red;">PS：</span>如果在双梦遇到一个叫‘<span style="color: red;">咩气气</span>’的纯阳请给她一串糖葫芦。😊</p>
     <p><span style="color: blue;">下个计划：</span>适配手机端（因博主一个人做时间有限，更新时间待定，先计划着。）😭</p>
     <el-card style="width: 40rem;height: 30rem;" @click="gobook">
+      <el-divider content-position="left">2024年11月13日</el-divider>
+      <p>修复了外观添加失败问题</p>
       <el-divider content-position="left">2024年10月15日</el-divider>
       <p>增加了外观统计页面</p>
       <p>使用了废牛记账本的API，因此与<span style="color: red;">废牛记账本数据互通</span>。</p>

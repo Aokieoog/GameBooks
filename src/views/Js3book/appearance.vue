@@ -593,7 +593,7 @@ async function Sold (e) {
 
 // 新增编辑提交
 async function addkc () {
-  const { open_at, name, cost, desc, zone, quantity, id, sale, saleprice } = ruleForm
+  const { open_at, name, cost, desc, zone, quantity, id, saleprice } = ruleForm
   if (bjshow.value) {
     let params = {
       open_at,
@@ -603,7 +603,7 @@ async function addkc () {
       zone,
       quantity,
       id,
-      sale,
+      sale:'0',
       saleprice
     }
     const res = await patch('/stock/stockupdate', params)
