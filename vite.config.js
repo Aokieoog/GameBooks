@@ -13,19 +13,18 @@ export default () =>  defineConfig({
   server: {
     port: 5173,
     proxy: {
-      // 部署后发现问题,target转换成现网域名
       '/dev': {
         target: "https://jx3api.btcsg.top", //目标url
         changeOrigin: true, //支持跨域
         //重写路径,替换/dev
         rewrite: (path) => path.replace(/^\/dev/, '') // 重写路径，替换 /dev
       },
-      // '/jx3': {
-      //   target: "http://jx.ieoog.com/jx3", //目标url
-      //   changeOrigin: true, //支持跨域
-      //   //重写路径,替换/dev
-      //   rewrite: (path) => path.replace(/^\/jx/, '') // 重写路径，替换 /dev
-      // }
+      '/api': {
+        target: "http://localhost:3000", //目标url
+        changeOrigin: true, //支持跨域
+        //重写路径,替换/dev
+        rewrite: (path) => path.replace(/^\/api/, '') 
+      },
     }
   }
 })
