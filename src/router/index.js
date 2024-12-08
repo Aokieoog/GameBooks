@@ -19,6 +19,15 @@ const routes = [
     component: () => import('@/views/404.vue')
   },
   {
+    path: '/login',
+    name: 'login',
+    meta: {
+      fullPageDisplay: true,
+      title: '登录'
+    },
+    component: () => import('@/views/Login/login.vue')
+  },
+  {
     path: '/js3book',//剑三记账本
     name: 'js3book',
     meta: {

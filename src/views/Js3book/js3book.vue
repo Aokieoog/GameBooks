@@ -12,6 +12,39 @@
         @keyup="nameArticle = nameArticle.replace(/\s/g, '')" @Keyup.enter="addName" placeholder="物品名称" style="width: 10rem;"
         maxlength="10" />
       <el-button class="active" @click="addName">添加</el-button>
+      <!-- 登录 -->
+      <div style="display: flex;align-items: center;">
+        <el-button v-show="!loginshow" type="primary" class="active" @click="dialogVisible = true">登录</el-button>
+        <el-dropdown v-show="loginshow">
+          <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" />
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item @click="logout">退出</el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+        <!-- 登录弹窗 -->
+        <el-dialog v-model="dialogVisible" title="登录账号" width="500" center>
+          <el-form :model="form" label-width="6.25rem" style="max-width: 25rem">
+            <el-form-item label="用户名:">
+              <el-input type="text" v-model="form.loginAccount"></el-input>
+            </el-form-item>
+            <el-form-item label="邮箱:">
+              <el-input type="emil" v-model="form.email">
+              </el-input>
+            </el-form-item>
+            <el-form-item label="密码:">
+              <el-input type="password" v-model="form.password" />
+            </el-form-item>
+          </el-form>
+          <div style="display: flex;justify-content: center;margin-top: 1.25rem;">
+            <el-button style="width: 12.5rem;"
+              @click="Login">注册</el-button>
+            <el-button style="width: 12.5rem;"
+              @click="Login">登录</el-button>
+          </div>
+        </el-dialog>
+      </div>
     </div>
 
     <div class="container-wrapper">
@@ -162,6 +195,13 @@ const nameArticle = ref("");
 let tosellData = reactive([])
 const sellindex = ref('')
 const centerDialogVisible = ref(false)
+const loginshow = ref(false)// 弹窗显示
+const dialogVisible = ref(false)
+const form = reactive({
+  loginAccount: '',
+  password: '',
+  email: '',
+})
 let addForSaleData = reactive({
   sellPricejin: '',
   sellPriceyin: '',
