@@ -3,7 +3,7 @@
     <h1>{{ currentTitle }}</h1>
     <div class="login-form">
       <!-- 注册 -->
-      <el-form :rules="rules" v-show="data.teileRigShow" :model="form" label-width="auto" style="min-width: 300px;padding-top: 2rem;" label-position="left">
+      <el-form :rules="rules" ref="rigForm" v-show="data.teileRigShow" :model="form" label-width="auto" style="min-width: 300px;padding-top: 2rem;" label-position="left">
         <el-form-item prop="loginAccount" label="账号">
           <el-input v-model="form.loginAccount" />
         </el-form-item>
@@ -69,6 +69,7 @@ const data = reactive({
   teileForgetShow: false
 })
 
+const rigForm = ref(null)
 const form = reactive({
   loginAccount: '',
   password: '',
@@ -124,19 +125,24 @@ const switchToForget = () => {
 const onSubmit = async (type) => {
   console.log(`当前操作：${type}`)
   console.log('表单数据:', form)
-
   if (type === 'register') {
-    try {
-      const response = await post('/api/users', {
-        loginAccount: form.loginAccount,
-        password: form.password,
-        email: form.email
-      });
-      console.log(response);
-      message.success('注册成功');
-    } catch (error) {
-      message.error('注册失败');
-    }
+    rigForm.value.validate(async (valid)=>{
+      if (valid) {
+        try {
+          const response = await post('/api/users', {
+            loginAccount: form.loginAccount,
+            password: form.password,
+            email: form.email
+          });
+          console.log(response);
+          message.success('注册成功');
+        } catch (error) {
+          message.error('注册失败');
+        }
+      }else{
+        message.warning('请填写完整信息');
+      }
+    })
   } else if (type === 'login') {
     // 处理登录逻辑
   } else if (type === 'forget') {
