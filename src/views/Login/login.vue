@@ -3,7 +3,8 @@
     <h1>{{ currentTitle }}</h1>
     <div class="login-form">
       <!-- 注册 -->
-      <el-form :rules="rules" ref="rigForm" v-show="data.teileRigShow" :model="form" label-width="auto" style="min-width: 300px;padding-top: 2rem;" label-position="left">
+      <el-form :rules="rules" ref="rigForm" v-show="data.teileRigShow" :model="form" label-width="auto"
+        style="min-width: 300px;padding-top: 2rem;" label-position="left">
         <el-form-item prop="loginAccount" label="账号">
           <el-input v-model="form.loginAccount" />
         </el-form-item>
@@ -21,7 +22,8 @@
         </el-form-item>
       </el-form>
       <!-- 登录 -->
-      <el-form :rules="rules" v-show="data.teileLogShow" :model="form" label-width="auto" style="min-width: 300px;padding-top: 2rem;" label-position="left">
+      <el-form :rules="rules" ref="lgionForm" v-show="data.teileLogShow" :model="form" label-width="auto"
+        style="min-width: 300px;padding-top: 2rem;" label-position="left">
         <el-form-item prop="loginAccount" label="账号">
           <el-input v-model="form.loginAccount" />
         </el-form-item>
@@ -36,7 +38,8 @@
         </el-form-item>
       </el-form>
       <!-- 找回密码 -->
-      <el-form :rules="rules" v-show="data.teileForgetShow" :model="form" label-width="auto" style="min-width: 300px;padding-top: 2rem;" label-position="left">
+      <el-form :rules="rules2" v-show="data.teileForgetShow" :model="form" label-width="auto"
+        style="min-width: 300px;padding-top: 2rem;" label-position="left">
         <el-form-item prop="email" label="邮箱">
           <el-input v-model="form.email" />
         </el-form-item>
@@ -58,18 +61,19 @@
 
 <script setup>
 import { ref, reactive } from 'vue';
-import {post} from '@/utils/http/httpbook'
+import { post } from '@/utils/http/httpbook'
 import message from '@/utils/message';
 
 const data = reactive({
   teileReg: 'Registration',
   teileLog: 'Login',
-  teileRigShow: true,
-  teileLogShow: false,
+  teileRigShow: false,
+  teileLogShow: true,
   teileForgetShow: false
 })
 
 const rigForm = ref(null)
+const lgionForm = ref(null)
 const form = reactive({
   loginAccount: '',
   password: '',
@@ -93,6 +97,22 @@ const rules = {
     { type: 'email', message: '邮箱格式不正确', trigger: 'blur' }
   ]
 }
+// const rules1 = {
+//   loginAccount: [
+//     { required: true, message: '账号不能为空', trigger: 'blur' },
+//     { pattern: /^[a-zA-Z0-9]{6,10}$/, message: '账号需为6-10位字母或数字', trigger: 'blur' }
+//   ],
+//   password: [
+//     { required: true, message: '密码不能为空', trigger: 'blur' },
+//     { min: 6, message: '密码长度至少为6位', trigger: 'blur' }
+//   ],
+// }
+// const rules2 = {
+//   email: [
+//     { required: true, message: '邮箱不能为空', trigger: 'blur' },
+//     { type: 'email', message: '邮箱格式不正确', trigger: 'blur' }
+//   ]
+// }
 
 // 当前标题
 const currentTitle = ref('Regist')
@@ -123,28 +143,45 @@ const switchToForget = () => {
 
 // 提交表单
 const onSubmit = async (type) => {
-  console.log(`当前操作：${type}`)
-  console.log('表单数据:', form)
   if (type === 'register') {
-    rigForm.value.validate(async (valid)=>{
+    rigForm.value.validate(async (valid) => {
       if (valid) {
         try {
-          const response = await post('/api/users', {
+          const res = await post('/api/users', {
             loginAccount: form.loginAccount,
             password: form.password,
             email: form.email
           });
-          console.log(response);
-          message.success('注册成功');
+          if (res.status === 201) {
+            message.success(res.data.success);
+            switchToLogin()
+          }
         } catch (error) {
-          message.error('注册失败');
+          message.error(error.response.data.error);
         }
-      }else{
-        message.warning('请填写完整信息');
+      } else {
+        message.warning('请检查表单输入是否正确');
       }
     })
   } else if (type === 'login') {
-    // 处理登录逻辑
+    lgionForm.value.validate(async (valid) => {
+      if (valid) {
+        try {
+          const res = await post('/api/login', {
+            loginAccount: form.loginAccount,
+            password: form.password
+          });
+          if (res.status === 201) {
+            router.push('/');
+            message.success('登录成功');
+          }
+        } catch (error) {
+          message.error(error.response.data.error)
+        }
+      } else {
+        message.warning('请检查表单输入是否正确');
+      }
+    })
   } else if (type === 'forget') {
     // 处理找回密码逻辑
   }
