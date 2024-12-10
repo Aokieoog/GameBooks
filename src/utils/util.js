@@ -9,7 +9,18 @@ export default {
     }
     return null
   },
+
   removeCookie(name) {
     document.cookie = name + '=; Max-Age=0; path=/';
+  },
+  
+  generateToken() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+    let tokens = ''
+    for (let i = 0; i < 128; i++) {
+      const index = Math.floor(Math.random() * chars.length)
+      tokens += chars[index]
+    }
+    return tokens
   }
 }

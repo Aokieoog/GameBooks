@@ -37,33 +37,6 @@ const routes = [
     component: () => import('@/views/Js3book/js3book.vue')
   },
   {
-    path: '/lineChart',
-    name: 'lineChart',
-    meta: {
-      fullPageDisplay: false,
-      title: '图表'
-    },
-    component: () => import('@/components/echarts/lineChart.vue')
-  },
-  {
-    path: '/getHeatMap',
-    name: 'getHeatMap',
-    meta: {
-      fullPageDisplay: false,
-      title: '热力图'
-    },
-    component: () => import('@/components/echarts/getHeatMap.vue')
-  },
-  {
-    path: '/pieLike',
-    name: 'pieLike',
-    meta: {
-      fullPageDisplay: true,
-      title: '图饼'
-    },
-    component: () => import('@/components/echarts/pieLike.vue')
-  },
-  {
     path: '/jx3user',
     name: 'jx3user',
     meta: {
@@ -79,14 +52,6 @@ const routes = [
       title: 'appearance'
     },
     component: () => import('@/views/Js3book/appearance.vue')
-  },
-  {
-    path: '/Swiper',
-    name: 'Swiper',
-    meta: {
-      fullPageDisplay: true
-    },
-    component: () => import('@/components/Swiper/Swiper.vue')
   },
   {
     path: '/counter',

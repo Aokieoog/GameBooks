@@ -1,6 +1,4 @@
 import axios from 'axios'
-import router from '@/router/index.js'
-import msg from '@/utils/message'
 import util from '@/utils/util.js'
 
 const request = axios.create({

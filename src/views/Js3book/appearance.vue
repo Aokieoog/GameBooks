@@ -286,7 +286,7 @@
 import msg from '@/utils/message.js'
 import { post, get, patch, DELETE } from '@/utils/http/http';
 import { ref, reactive, onMounted, computed } from 'vue';
-import cookie from '@/utils/http/cookie.js'
+import cookie from '@/utils/cookie.js'
 import util from '@/utils/util.js'
 import { useJxwg } from "@/pinia/useJx3book/userJxwg.js";
 import { storeToRefs } from 'pinia';
