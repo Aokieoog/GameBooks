@@ -38,7 +38,7 @@
         </el-form-item>
       </el-form>
       <!-- 找回密码 -->
-      <el-form :rules="rules2" v-show="data.teileForgetShow" :model="form" label-width="auto"
+      <el-form :rules="rules" v-show="data.teileForgetShow" :model="form" label-width="auto"
         style="min-width: 300px;padding-top: 2rem;" label-position="left">
         <el-form-item prop="email" label="邮箱">
           <el-input v-model="form.email" />
@@ -97,22 +97,6 @@ const rules = {
     { type: 'email', message: '邮箱格式不正确', trigger: 'blur' }
   ]
 }
-// const rules1 = {
-//   loginAccount: [
-//     { required: true, message: '账号不能为空', trigger: 'blur' },
-//     { pattern: /^[a-zA-Z0-9]{6,10}$/, message: '账号需为6-10位字母或数字', trigger: 'blur' }
-//   ],
-//   password: [
-//     { required: true, message: '密码不能为空', trigger: 'blur' },
-//     { min: 6, message: '密码长度至少为6位', trigger: 'blur' }
-//   ],
-// }
-// const rules2 = {
-//   email: [
-//     { required: true, message: '邮箱不能为空', trigger: 'blur' },
-//     { type: 'email', message: '邮箱格式不正确', trigger: 'blur' }
-//   ]
-// }
 
 // 当前标题
 const currentTitle = ref('Regist')
