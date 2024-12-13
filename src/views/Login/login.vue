@@ -1,6 +1,7 @@
 <template>
   <div class="login">
     <h1>{{ currentTitle }}</h1>
+      <a @click="goNotice">公告</a>
     <div class="login-form">
       <!-- 注册 -->
       <el-form :rules="rules" ref="rigForm" v-show="data.teileRigShow" :model="form" label-width="auto"
@@ -38,7 +39,7 @@
         </el-form-item>
       </el-form>
       <!-- 找回密码 -->
-      <el-form :rules="rules" v-show="data.teileForgetShow" :model="form" label-width="auto"
+      <el-form :rules="rules" ref="zhForm" v-show="data.teileForgetShow" :model="form" label-width="auto"
         style="min-width: 300px;padding-top: 2rem;" label-position="left">
         <el-form-item prop="email" label="邮箱">
           <el-input v-model="form.email" />
@@ -63,6 +64,9 @@
 import { ref, reactive } from 'vue';
 import { post } from '@/utils/http/httpbook'
 import message from '@/utils/message';
+import { useRouter } from 'vue-router';
+
+const router = useRouter()
 
 const data = reactive({
   teileReg: 'Registration',
@@ -74,9 +78,10 @@ const data = reactive({
 
 const rigForm = ref(null)
 const lgionForm = ref(null)
+const zhForm = ref(null)
 const form = reactive({
-  loginAccount: '',
-  password: '',
+  loginAccount: '123456',
+  password: '123456',
   email: ''
 })
 
@@ -125,6 +130,11 @@ const switchToForget = () => {
   currentTitle.value = 'Find password'
 }
 
+const goNotice = () => {
+  // 跳转到公告页
+  router.push('/')
+}
+
 // 提交表单
 const onSubmit = async (type) => {
   if (type === 'register') {
@@ -156,8 +166,8 @@ const onSubmit = async (type) => {
             password: form.password
           });
           if (res.status === 201) {
-            router.push('/');
             message.success('登录成功');
+            router.push('/js3book');
           }
         } catch (error) {
           message.error(error.response.data.error)
@@ -167,7 +177,22 @@ const onSubmit = async (type) => {
       }
     })
   } else if (type === 'forget') {
-    // 处理找回密码逻辑
+    zhForm.value.validate(async (valid)=>{
+      if (valid) {
+        try {
+          const res = await post('/api/forget-password', {
+            email: form.email
+          });
+          if (res.status === 201) {
+            message.success('请查收您的邮箱，并点击重置密码的链接');
+          }
+        } catch (error) {
+          message.error(error.response.data.error);
+        }
+      } else {
+        message.warning('请检查表单输入是否正确');
+      }
+    })
   }
 }
 
@@ -186,7 +211,7 @@ const onSubmit = async (type) => {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  margin-top: 3%;
+  margin-top: 1%;
   width: 25rem;
   box-shadow: rgba(0, 0, 0, 0.07) 0px 1px 2px, rgba(0, 0, 0, 0.07) 0px 2px 4px, rgba(0, 0, 0, 0.07) 0px 4px 8px, rgba(0, 0, 0, 0.07) 0px 8px 16px, rgba(0, 0, 0, 0.07) 0px 16px 32px, rgba(0, 0, 0, 0.07) 0px 32px 64px;
   background: rgba(255, 255, 255, 0.5);

@@ -1,10 +1,10 @@
 <template>
-  <div class="container">
+  <div @click="gobook" class="container">
     <!-- <h1>感谢使用剑侠3记账本</h1> -->
     <h2>公告</h2>
     <p><span style="color: red;">PS：</span>如果在双梦遇到一个叫‘<span style="color: red;">咩气气</span>’的纯阳请给她一串糖葫芦。😊</p>
     <p><span style="color: blue;">下个计划：</span>适配手机端（因博主一个人做时间有限，更新时间待定，先计划着。）😭</p>
-    <el-card style="width: 40rem;height: 30rem;" @click="gobook">
+    <el-card style="width: 40rem;height: 30rem;">
       <el-divider content-position="left">2024年11月13日</el-divider>
       <p>修复了外观添加失败问题</p>
       <el-divider content-position="left">2024年10月15日</el-divider>
@@ -17,7 +17,7 @@
       <p>此网站完全使用静态部署，所有的数据信息全部储存在本地浏览器，<span style="color: red;">不会窃取信息</span>。</p>
       <p>同样有弊端，不可以跨设备使用,浏览器缓存清除数据消失（<span style="color: red;">不手动清除不会消失</span>）。</p>
     </el-card>
-    <p>使用方法:<el-link class="url" href="http://qs.ieoog.com/index.php/archives/28/" target="_blank">点我</el-link></p>
+    <p>使用方法:<el-link class="url" href="http://www.ieoog.com" target="_blank">点我</el-link></p>
   </div>
   <div class="img">
       <img style="width: 6.25rem; height: 6.25rem" src="@/assets/png/miemie.png" />
