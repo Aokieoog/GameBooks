@@ -19,6 +19,9 @@ const toacomputed = computed(() => {
   <div class="sidebar">
     <el-menu router mode="horizontal" background-color="#24292e" text-color="#ffffff" :default-active="toacomputed"
       :collapse="isCollapse" class="sidmenu" @close="handleClose" @open="handleOpen">
+      <el-menu-item v-for="(item, i) in datalist" :key="i" :index="item.toa">
+        <template #title>{{ item.sidebar }}</template>
+      </el-menu-item>
       <el-sub-menu>
         <template #title>
           <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" />
@@ -26,9 +29,6 @@ const toacomputed = computed(() => {
         <el-menu-item>修改密码</el-menu-item>
         <el-menu-item>退出</el-menu-item>
       </el-sub-menu>
-      <el-menu-item v-for="(item, i) in datalist" :key="i" :index="item.toa">
-        <template #title>{{ item.sidebar }}</template>
-      </el-menu-item>
     </el-menu>
   </div>
 </template>
@@ -45,7 +45,9 @@ const toacomputed = computed(() => {
   z-index: 99999;
 }
 
-.el-menu--horizontal>.el-sub-menu:nth-child(0) {
-  margin-right: auto;
+.el-menu--horizontal>.el-sub-menu:nth-last-child(1) {
+  position: absolute;
+  right: 5rem;
+  top: .555rem;
 }
 </style>

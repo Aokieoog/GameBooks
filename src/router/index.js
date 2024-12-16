@@ -54,6 +54,15 @@ const routes = [
     component: () => import('@/views/Js3book/appearance.vue')
   },
   {
+    path: '/test',
+    name: 'test',
+    meta: {
+      fullPageDisplay: true,
+      title: 'test'
+    },
+    component: () => import('@/components/test.vue')
+  },
+  {
     path: '/counter',
     name: 'counter',
     meta: {
