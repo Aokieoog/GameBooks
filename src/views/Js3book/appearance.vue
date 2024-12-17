@@ -286,7 +286,7 @@
 import msg from '@/utils/message.js'
 import { post, get, patch, DELETE } from '@/utils/http/http';
 import { ref, reactive, onMounted, computed } from 'vue';
-import cookie from '@/utils/cookie.js'
+import {Cookie} from '@/utils/cookie.js'
 import util from '@/utils/util.js'
 import { useJxwg } from "@/pinia/useJx3book/userJxwg.js";
 import { storeToRefs } from 'pinia';
@@ -397,7 +397,7 @@ async function Login () {
   })
   if (restoken.status === 200) {
     dialogVisible.value = false
-    cookie(restoken.data.access_token)
+    Cookie(restoken.data.access_token)
     Mystocks()
     restaurants.value = await loadAll()
   }

@@ -1,7 +1,9 @@
 import axios from 'axios'
-import router from '@/router/index.js'
-import msg from '@/utils/message'
 import util from '@/utils/util.js'
+import message from '@/utils/message'
+import router from '@/router'
+import { ElNotification } from 'element-plus'
+
 
 const requestbook = axios.create({
   // 获取环境变量中的 API 基础路径
@@ -13,11 +15,29 @@ const requestbook = axios.create({
 // 请求拦截器
 requestbook.interceptors.request.use(
   config => {
-    // 在这里做一些请求前的处理，例如添加 token 等
-    let token = util.getCookie('access_token')
-    if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`;  // 假设使用 Bearer 方式携带 token
+    // 获取 token
+    let token = util.getCookie('access_tokenbook');
+    // 定义不需要 token 的请求路径
+    const noAuthPaths = ['/api/register', '/api/login', '/api/forgot-password'];
+    // 检查请求路径是否在不需要 token 的列表中
+    const isNoAuthPath = noAuthPaths.some(path => config.url.includes(path));
+    if (!token && !isNoAuthPath) {
+      // 如果没有 token 且请求路径需要权限，则跳转到登录页面
+        ElNotification({
+          title: 'Info',
+          message: '请先登录',
+          type: 'info',
+          duration: 3000,
+          position: 'bottom-right',
+        })
+      setTimeout(() => {
+        router.push('/login');
+      }, 2000);
     }
+    // if (token) {
+    //   // 如果有 token，添加到请求头
+    //   config.headers['Authorization'] = `Bearer ${token}`;
+    // }
     return config
   },
   error => {

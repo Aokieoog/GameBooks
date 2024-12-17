@@ -65,6 +65,7 @@ import { ref, reactive } from 'vue';
 import { post } from '@/utils/http/httpbook'
 import message from '@/utils/message';
 import { useRouter } from 'vue-router';
+import { Cookiebook } from '@/utils/cookie.js';
 
 const router = useRouter()
 
@@ -167,6 +168,7 @@ const onSubmit = async (type) => {
           });
           if (res.status === 201) {
             message.success('登录成功');
+            Cookiebook(res.data.token);
             router.push('/js3book');
           }
         } catch (error) {
