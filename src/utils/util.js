@@ -22,5 +22,24 @@ export default {
       tokens += chars[index]
     }
     return tokens
+  },
+
+  // 格式化时间戳秒级
+  formatDate(timestamp) {
+    const date = new Date(timestamp);  // 将毫秒级时间戳转换为日期
+    const options = { 
+      year: 'numeric', 
+      month: 'numeric', 
+      day: 'numeric', 
+      hour: 'numeric', 
+      minute: 'numeric', 
+      second: 'numeric', 
+      hour12: false, 
+      timeZone: 'Asia/Shanghai'  // 设置为中国时区
+    };
+    return date.toLocaleString('zh-CN', options)
+               .replace(/\//g, '-')    // 替换 / 为 年
+               .replace(/,/g, '-')     // 替换 , 为 日
+               .replace(/:/g, ':');    // 替换 : 为 ：
   }
 }

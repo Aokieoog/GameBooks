@@ -168,7 +168,8 @@ const onSubmit = async (type) => {
           });
           if (res.status === 201) {
             message.success('登录成功');
-            Cookiebook(res.data.token);
+            Cookiebook('access_tokenbook',res.data.token);
+            Cookiebook('userid',res.data.user.uid);
             router.push('/js3book');
           }
         } catch (error) {

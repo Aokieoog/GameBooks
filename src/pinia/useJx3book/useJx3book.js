@@ -1,14 +1,23 @@
 import { defineStore } from 'pinia'
-
-// 你可以任意命名 `defineStore()` 的返回值，但最好使用 store 的名字，同时以 `use` 开头且以 `Store` 结尾。
-// (比如 `useUserStore`，`useCartStore`，`useProductStore`)
-// 第一个参数是你的应用中 Store 的唯一 ID。
+import {get} from '@/utils/http/httpbook'
+import util from '@/utils/util';
 export const useJx3book = defineStore('tableData', {
-  // 其他配置...
-  state: () => {
-    return {
-      tableData: JSON.parse(localStorage.getItem('jx3')) || [],
-      wupindata: JSON.parse(localStorage.getItem('wupin')) || [],
-    }
+  state: () => ({
+    userId: util.getCookie('userid'),
+    tableData: JSON.parse(localStorage.getItem('jx3')) || [],
+  }),
+  actions: {
+    async orderInquiry() {
+      try {
+        const response = await get('/api/orderInquiry', { userId: this.userId });
+        // 根据实际情况处理响应数据
+        this.tableData = response.data;
+        console.log(response.data);
+        return response.data;
+      } catch (error) {
+        console.error('Order inquiry failed:', error);
+        throw error;
+      }
+    },
   },
 })

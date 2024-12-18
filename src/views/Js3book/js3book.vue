@@ -6,29 +6,34 @@
       <PriceInput :addForSaleData="addForSaleData" @addForSale="handleAddForSale" />
     </div>
     <div class="containerright">
-      <el-table :data="tableData" border @row-click="sellTheGoods">
-        <el-table-column prop="date" label="买入时间" />
-        <el-table-column prop="name" label="名称">
+      <el-table ref="table" :data="sortedTableData" border @row-click="sellTheGoods">
+        <el-table-column prop="createdAt" sortable label="买入时间">
+          <template #default="scope">
+            {{ util.formatDate(scope.row.createdAt) }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="name" show-overflow-tooltip sortable label="名称">
           <template #default="scope">
             <div class="divicon-table">
-              <img class="icon-table" v-if="scope.row.image" :src="scope.row.image" alt="Icon" />
+              <img class="icon-table" v-if="scope.row.iconID"
+                :src="`https://icon.jx3box.com/icon/` + scope.row.iconID + `.png`" alt="Icon" />
               <span style="color: rgb(119 2 247);">{{ scope.row.name }}</span>
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="dj" label="买入单价">
+        <el-table-column prop="totalValue" sortable label="买入单价">
           <template #default="scope">
-            <span style="color: #f75e02;">{{ scope.row.dj }}</span>
+            <span style="color: #f75e02;">{{ numPad(unitPrice(scope.row.jin, scope.row.yin, scope.row.tong)) }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="ress" label="买入数量">
+        <el-table-column prop="ress" sortable label="买入数量">
           <template #default="scope">
             <span style="color: rgb(123 141 64);">{{ scope.row.ress }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="djress" label="总成本">
+        <el-table-column prop="totalValue" sortable label="总成本">
           <template #default="scope">
-            <span style="color: #f75e02;">{{ scope.row.djress }}</span>
+            <span style="color: #f75e02;">{{ numPad(scope.row.totalValue) }}</span>
           </template>
         </el-table-column>
         <!-- <el-table-column prop="profits" label="总利润(5%手续费)">
@@ -75,19 +80,20 @@
 </template>
 <script setup>
 import msg from '@/utils/message.js'
-import { ref, reactive } from "vue";
+import { ref, reactive, onMounted, computed, nextTick } from "vue";
 import { post, get } from '@/utils/http/httpbook'
 import { storeToRefs } from 'pinia';
 import { useJx3book } from "@/pinia/useJx3book/useJx3book";
 import Search from '@/components/search/Search.vue';
 import PriceInput from '@/components/PriceInput/PriceInput.vue';
+import util from '@/utils/util.js'
+import { ElNotification } from 'element-plus'
+
 
 const Jx3Store = useJx3book()
 const { tableData } = storeToRefs(Jx3Store);
 
-const now = new Date()
 let tosellData = reactive([])
-const sellindex = ref('')
 const selectedCity = ref('')
 const addForSaleData = ref({
   sellPricejin: '',
@@ -95,19 +101,40 @@ const addForSaleData = ref({
   sellPricetong: '',
   sellPriceress: '',
 });
+const tableDatac = ref([])
+
+onMounted(() => {
+  Jx3Store.orderInquiry()
+  tableDatac.value = tableData
+})
+
+//时间排序
+const sortedTableData = computed(() => {
+  return tableData.value.slice().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+})
+
 
 const handleSelect = (city) => {
-  console.log("父组件接收到的选中项:", city);
   selectedCity.value = city;
 };
+
 
 // 添加订单
 const handleAddForSale = async (sellPrice) => {
   try {
-    console.log(selectedCity.value);  
-    Object.assign(sellPrice, { itemId: selectedCity.value.itemId}); 
+    const userId = util.getCookie('userid')
+    Object.assign(sellPrice, { itemId: selectedCity.value.itemId, userId });
     const response = await post('/api/orders', sellPrice);
-    console.log('Response:', response.data);
+    if (response.status === 201) {
+      ElNotification({
+        title: '添加成功',
+        message: response.data.message,
+        type: 'success',
+        duration: 3000,
+        position: 'bottom-right',
+      })
+      Jx3Store.orderInquiry()
+    }
   } catch (error) {
     console.error('Error:', error);
   }
@@ -129,46 +156,6 @@ const fetchCities = async (query) => {
   }
 };
 
-//查看售出列表
-function sellTheGoods (row) {
-  tosellData = row.tosellData
-  sellindex.value = Jx3Store.tableData.indexOf(row)
-}
-
-//添加售出
-function addForSale () {
-  let idata = Jx3Store.tableData[sellindex.value]
-
-  if ((addForSaleData.sellPricejin || addForSaleData.sellPriceyin || addForSaleData.sellPricetong) && addForSaleData.sellPriceress) {
-    let he = addForSaleData.sellPricejin + zeroPad(addForSaleData.sellPriceyin) + zeroPad(addForSaleData.sellPricetong)
-    idata.tosellData.push({
-      timeToSell: `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`,//售出时间
-      unitPrice: he, // 售出单价
-      quantitySold: addForSaleData.sellPriceress,//售出数量
-      totalSales: he * addForSaleData.sellPriceress, //售出总额
-      unitPriceText: numPad(he),
-      totalSalesText: numPad(he * addForSaleData.sellPriceress)
-    })
-
-    // 计算利润
-    let sumsdata = [0, 0]
-    tosellData.forEach(item => {
-      sumsdata[0] += parseInt(item.quantitySold); // 更新售出数量
-      sumsdata[1] += parseFloat(item.totalSales); // 更新售出总额
-    });
-    idata.sums = sumsdata
-
-    if (sumsdata[1] > idata.djressnum) {
-      idata.profits = numPad((sumsdata[1] * 0.95) - idata.djressnum)
-    } else if (sumsdata[1] <= idata.djressnum) {
-      idata.profits = `-${numPad(idata.djressnum - (sumsdata[1] * 0.95))}`
-    }
-    localStorage.setItem('jx3', JSON.stringify(Jx3Store.tableData))
-    msg.success('添加售出')
-  } else {
-    msg.error('请填写售出单价和数量')
-  }
-}
 
 // 定义一个函数，用于将数字转换为砖、金、银、铜的表示
 function numPad (amount) {
@@ -195,43 +182,10 @@ const zeroPad = (num) => {
   return s;
 }
 
-// 删除表格数据
-const deleteRow = (index) => {
-  Jx3Store.tableData.splice(index, 1)
-  localStorage.setItem('jx3', JSON.stringify(Jx3Store.tableData))
+// 计算总价
+function unitPrice (jin, yin, tong) {
+  return jin * 10000 + yin * 100 + tong
 }
-
-// 删除售出列表
-const deletetosell = (index) => {
-  Jx3Store.tableData[sellindex.value].tosellData.splice(index, 1)
-  let idata = Jx3Store.tableData[sellindex.value]
-  let sumsdata = [0, 0]
-  tosellData.forEach(item => {
-    sumsdata[0] += parseInt(item.quantitySold); // 更新售出数量
-    sumsdata[1] += parseFloat(item.totalSales); // 更新售出总额
-  });
-  idata.sums = sumsdata
-
-  if (sumsdata[1] > idata.djressnum) {
-    idata.profits = numPad(sumsdata[1] - idata.djressnum)
-  } else if (sumsdata[1] < idata.djressnum) {
-    idata.profits = `-${numPad(idata.djressnum - sumsdata[1])}`
-  }
-  localStorage.setItem('jx3', JSON.stringify(Jx3Store.tableData))
-}
-
-const getSummaries = ({ data }) => {
-  const sums = ['合计', '😁', 0, 0, '😁']; // 初始化数组，预填充静态值
-
-  // 计算售出数量和售出总额
-  data.forEach(item => {
-    sums[2] += parseInt(item.quantitySold); // 更新售出数量
-    sums[3] += parseFloat(item.totalSales); // 更新售出总额
-  });
-  sums[3] = numPad(sums[3]);
-  return sums;
-};
-
 </script>
 
 <style scoped lang="less">
