@@ -42,30 +42,7 @@
           </template>
         </el-table-column> -->
         <el-table-column prop="djress1" label="出售">
-          <el-popover placement="left" z-index="99999" :width="600" trigger="click">
-            <template #reference>
-              <el-button link type="primary" size="small">出售</el-button>
-            </template>
-            <div class="item-actions">
-              <!-- <span class="item-span">单价：</span> -->
-              <!-- <PriceInput :addForSaleData="addForSaleData" /> -->
-              <!-- <el-button class="itembutton" type="success" @click="addForSale">添加</el-button> -->
-            </div>
-            <el-divider />
-            <el-table :data="tosellData" show-summary :summary-method="getSummaries" max-height="400">
-              <el-table-column width="110" property="timeToSell" label="售出时间" />
-              <el-table-column width="130" property="unitPriceText" label="售出单价" />
-              <el-table-column width="90" property="quantitySold" label="售出数量" />
-              <el-table-column width="160" property="totalSalesText" label="售出总额" />
-              <el-table-column fixed="right" label="状态" width="60">
-                <template #default="scope">
-                  <el-button link type="primary" size="small" @click.prevent="scope.$index">
-                    删除
-                  </el-button>
-                </template>
-              </el-table-column>
-            </el-table>
-          </el-popover>
+          <sell-order :sellPrice="sellOrderData" @addForSale="sellOrderF"></sell-order>
         </el-table-column>
         <el-table-column fixed="right" label="状态">
           <template #default="scope">
@@ -88,20 +65,20 @@ import Search from '@/components/search/Search.vue';
 import PriceInput from '@/components/PriceInput/PriceInput.vue';
 import util from '@/utils/util.js'
 import { ElNotification } from 'element-plus'
+import SellOrder from '@/components/sellOrder/sellOrder.vue';
 
 
 const Jx3Store = useJx3book()
 const { tableData } = storeToRefs(Jx3Store);
-
-let tosellData = reactive([])
 const selectedCity = ref('')
+const tableDatac = ref([])
 const addForSaleData = ref({
   sellPricejin: '',
   sellPriceyin: '',
   sellPricetong: '',
   sellPriceress: '',
 });
-const tableDatac = ref([])
+
 
 onMounted(() => {
   Jx3Store.orderInquiry()
@@ -121,8 +98,6 @@ const handleSelect = (city) => {
 
 // 添加订单
 const handleAddForSale = async (sellPrice) => {
-  console.log(sellPrice);
-
   const userId = util.getCookie('userid')
   if (!selectedCity.value.itemId) {
     return msg.error('请选择物品')
@@ -147,6 +122,11 @@ const handleAddForSale = async (sellPrice) => {
   }
 };
 
+// 出售订单
+const sellOrderF = async (sellPrice) => {
+  const userId = util.getCookie('userid')
+  const res = await post('/api/sellorders', {})
+}
 // 搜索物品列表
 const fetchCities = async (query) => {
   try {
@@ -189,7 +169,6 @@ const deleteOrder = async (id) => {
   }
 };
 
-
 // 定义一个函数，用于将数字转换为砖、金、银、铜的表示
 function numPad (amount) {
   const units = ['砖', '金', '银', '铜'];
@@ -204,15 +183,6 @@ function numPad (amount) {
     amount %= dividers[i];
   }
   return result.join('');
-}
-
-// 定义一个函数，用于将数字转换为01的表示
-const zeroPad = (num) => {
-  let s = num + "";
-  while (s.length < 2) {
-    s = "0" + s;
-  }
-  return s;
 }
 
 // 计算总价

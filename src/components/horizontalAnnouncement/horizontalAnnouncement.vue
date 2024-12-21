@@ -1,3 +1,4 @@
+<!--滚动公告-->
 <template>
   <div v-if="isVisible" class="scrolling-announcement">
     <div class="announcement-content">

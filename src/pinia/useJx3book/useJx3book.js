@@ -12,7 +12,6 @@ export const useJx3book = defineStore('tableData', {
         const response = await get('/api/orderInquiry', { userId: this.userId });
         // 根据实际情况处理响应数据
         this.tableData = response.data;
-        console.log(response.data);
         return response.data;
       } catch (error) {
         console.error('Order inquiry failed:', error);
