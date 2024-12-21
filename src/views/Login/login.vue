@@ -1,7 +1,8 @@
 <template>
   <div class="login">
-    <h1>{{ currentTitle }}</h1>
-      <a @click="goNotice">公告</a>
+    <horizontalAnnouncement></horizontalAnnouncement>
+    <!-- <h1>{{ currentTitle }}</h1> -->
+    <a @click="goNotice" style="margin-top: 8%;">公告</a>
     <div class="login-form">
       <!-- 注册 -->
       <el-form :rules="rules" ref="rigForm" v-show="data.teileRigShow" :model="form" label-width="auto"
@@ -66,6 +67,7 @@ import { post } from '@/utils/http/httpbook'
 import message from '@/utils/message';
 import { useRouter } from 'vue-router';
 import { Cookiebook } from '@/utils/cookie.js';
+import horizontalAnnouncement from "@/components/horizontalAnnouncement/horizontalAnnouncement.vue";
 
 const router = useRouter()
 
@@ -105,14 +107,14 @@ const rules = {
 }
 
 // 当前标题
-const currentTitle = ref('Regist')
+const currentTitle = ref('注册')
 
 // 切换到注册
 const switchToRegister = () => {
   data.teileRigShow = true
   data.teileLogShow = false
   data.teileForgetShow = false
-  currentTitle.value = 'Regist'
+  currentTitle.value = '注册'
 }
 
 // 切换到登录
@@ -168,8 +170,8 @@ const onSubmit = async (type) => {
           });
           if (res.status === 201) {
             message.success('登录成功');
-            Cookiebook('access_tokenbook',res.data.token);
-            Cookiebook('userid',res.data.user.uid);
+            Cookiebook('access_tokenbook', res.data.token);
+            Cookiebook('userid', res.data.user.uid);
             router.push('/js3book');
           }
         } catch (error) {
@@ -180,7 +182,7 @@ const onSubmit = async (type) => {
       }
     })
   } else if (type === 'forget') {
-    zhForm.value.validate(async (valid)=>{
+    zhForm.value.validate(async (valid) => {
       if (valid) {
         try {
           const res = await post('/api/forget-password', {
@@ -214,7 +216,7 @@ const onSubmit = async (type) => {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  margin-top: 1%;
+  margin-top: 2%;
   width: 25rem;
   box-shadow: rgba(0, 0, 0, 0.07) 0px 1px 2px, rgba(0, 0, 0, 0.07) 0px 2px 4px, rgba(0, 0, 0, 0.07) 0px 4px 8px, rgba(0, 0, 0, 0.07) 0px 8px 16px, rgba(0, 0, 0, 0.07) 0px 16px 32px, rgba(0, 0, 0, 0.07) 0px 32px 64px;
   background: rgba(255, 255, 255, 0.5);

@@ -4,13 +4,9 @@
       <span v-for="(item, index) in announcements" :key="'first-' + index" class="announcement-item">
         {{ item }}
       </span>
-      <!-- 复制一份公告内容，确保滚动时无缝衔接 -->
-      <span v-for="(item, index) in announcements" :key="'second-' + index" class="announcement-item">
-        {{ item }}
-      </span>
     </div>
     <!-- 关闭按钮 -->
-    <button class="close-btn" @click="closeAnnouncement">X</button>
+    <!-- <button class="close-btn" @click="closeAnnouncement">×</button> -->
   </div>
 </template>
 
@@ -19,10 +15,9 @@ import { ref } from 'vue';
 // 响应式数据
 const isVisible = ref(true); // 控制公告是否显示
 const announcements = ref([
-  "公告1：网站更新，请查看。",
-  "公告2：服务器维护，敬请期待。",
-  "公告3：新活动上线，快来参与！",
-  // 可以继续添加更多公告
+  "1.数据云端储存，移除本地储存逻辑。",
+  "2.优化登录页面，公告页面 UI 更改。",
+  "3.重做交易行新增订单逻辑。"
 ]);
 
 // 关闭公告
@@ -38,7 +33,7 @@ const closeAnnouncement = () => {
   left: 0;
   width: 100%;
   height: 18px; /* 横幅高度 */
-  background-color: #f8f8f8;
+  background-color: none;
   padding: 3px 0; /* 内边距 */
   z-index: 999;
   overflow: hidden;

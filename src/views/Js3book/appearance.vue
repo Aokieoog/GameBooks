@@ -40,9 +40,7 @@
               <el-input type="text" v-model="form.user_name"></el-input>
             </el-form-item>
             <el-form-item label="注册邮箱:">
-              <el-input type="emil" v-model="form.mail">
-                <template #append>.com</template>
-              </el-input>
+              <el-input type="emil" v-model="form.mail" />
             </el-form-item>
             <el-form-item v-show="zhuceshow" label="QQ:">
               <el-input type="text" v-model="form.qq" />
@@ -366,7 +364,7 @@ function posswrodBtn () {
 async function Zhuceq () {
   let { user_name, qq, password } = form;
   let data = {
-    mail: form.mail + '.com',
+    mail: form.mail,
     password,
     qq,
     user_name,
@@ -387,7 +385,7 @@ async function Zhuceq () {
 // 登录
 async function Login () {
   let data = {
-    username: form.mail + '.com',
+    username: form.mail,
     password: form.password
   }
   let restoken = await post('/user/token', data, {
@@ -405,7 +403,7 @@ async function Login () {
 // 找回密码
 async function FindPassword () {
   let data = {
-    email: form.mail + '.com',
+    email: form.mail,
   }
   try {
     let res = await post('/user/request-reset', data)

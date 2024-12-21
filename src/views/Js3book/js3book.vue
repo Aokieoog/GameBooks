@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="navbar">
-      <span style="margin-right: 1.25rem;">物品名:</span>
+      <span style="margin-right: 1.25rem;font-weight: 600;">物品名:</span>
       <Search style="margin-right: 1rem;" @handleSelect="handleSelect" :fetch-cities="fetchCities"></Search>
       <PriceInput :addForSaleData="addForSaleData" @addForSale="handleAddForSale" />
     </div>
@@ -48,7 +48,7 @@
             </template>
             <div class="item-actions">
               <!-- <span class="item-span">单价：</span> -->
-              <PriceInput :addForSaleData="addForSaleData" />
+              <!-- <PriceInput :addForSaleData="addForSaleData" /> -->
               <!-- <el-button class="itembutton" type="success" @click="addForSale">添加</el-button> -->
             </div>
             <el-divider />
@@ -59,7 +59,7 @@
               <el-table-column width="160" property="totalSalesText" label="售出总额" />
               <el-table-column fixed="right" label="状态" width="60">
                 <template #default="scope">
-                  <el-button link type="primary" size="small" @click.prevent="deletetosell(scope.$index)">
+                  <el-button link type="primary" size="small" @click.prevent="scope.$index">
                     删除
                   </el-button>
                 </template>
@@ -69,7 +69,7 @@
         </el-table-column>
         <el-table-column fixed="right" label="状态">
           <template #default="scope">
-            <el-button link type="primary" size="small" @click.prevent="deleteRow(scope.$index)">
+            <el-button link type="primary" size="small" @click.prevent="deleteOrder(scope.row.orderId)">
               删除
             </el-button>
           </template>
@@ -81,7 +81,7 @@
 <script setup>
 import msg from '@/utils/message.js'
 import { ref, reactive, onMounted, computed, nextTick } from "vue";
-import { post, get } from '@/utils/http/httpbook'
+import { post, get , DELETE} from '@/utils/http/httpbook'
 import { storeToRefs } from 'pinia';
 import { useJx3book } from "@/pinia/useJx3book/useJx3book";
 import Search from '@/components/search/Search.vue';
@@ -121,8 +121,15 @@ const handleSelect = (city) => {
 
 // 添加订单
 const handleAddForSale = async (sellPrice) => {
+  console.log(sellPrice);
+
+  const userId = util.getCookie('userid')
+  if (!selectedCity.value.itemId) {
+    return msg.error('请选择物品')
+  } else if (!sellPrice.jin && !sellPrice.yin && !sellPrice.tong) {
+    return msg.error('请填写价格')
+  }
   try {
-    const userId = util.getCookie('userid')
     Object.assign(sellPrice, { itemId: selectedCity.value.itemId, userId });
     const response = await post('/api/orders', sellPrice);
     if (response.status === 201) {
@@ -152,6 +159,32 @@ const fetchCities = async (query) => {
     }));
   } catch (error) {
     console.error('接口调用失败:', error);
+    return [];
+  }
+};
+// 删除订单
+const deleteOrder = async (id) => {
+  console.log(id);
+  
+  try {
+    const response = await DELETE('/api/delorders/',{id});
+    Jx3Store.orderInquiry()
+    ElNotification({
+        title: '删除成功',
+        message: '删除成功',
+        type: 'success',
+        duration: 3000,
+        position: 'bottom-right',
+      })
+    return response.data;
+  } catch (error) {
+    ElNotification({
+        title: '删除失败',
+        message: '删除失败',
+        type: 'error',
+        duration: 3000,
+        position: 'bottom-right',
+      })
     return [];
   }
 };

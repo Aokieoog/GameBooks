@@ -40,12 +40,12 @@ const sellPrice = ref({
   jin: props.addForSaleData.sellPricejin || '',
   yin: props.addForSaleData.sellPriceyin || '',
   tong: props.addForSaleData.sellPricetong || '',
-  quantity: props.addForSaleData.sellPriceress || '',
+  quantity: props.addForSaleData.sellPriceress || '1',
 });
 
 // 货币配置数组
 const currencies = [
-  { key: 'jin', maxlength: 6 },
+  { key: 'jin', maxlength: 8 },
   { key: 'yin', maxlength: 2 },
   { key: 'tong', maxlength: 2 },
 ];
@@ -78,6 +78,7 @@ const addForSale = () => {
 }
 .item-span {
   margin-right: 5px;
+  font-weight: 600;
 }
 .price-field {
   display: flex;
