@@ -3,7 +3,7 @@
     <div class="navbar">
       <span style="margin-right: 1.25rem;font-weight: 600;">物品名:</span>
       <Search style="margin-right: 1rem;" @handleSelect="handleSelect" :fetch-cities="fetchCities"></Search>
-      <PriceInput :addForSaleData="addForSaleData" @addForSale="handleAddForSale" />
+      <PriceInput @addForSale="handleAddForSale" />
     </div>
     <div class="containerright">
       <el-table ref="table" :data="sortedTableData" border @row-click="sellTheGoods">
@@ -36,19 +36,31 @@
             <span style="color: #f75e02;">{{ numPad(scope.row.totalValue) }}</span>
           </template>
         </el-table-column>
-        <!-- <el-table-column prop="profits" label="总利润(5%手续费)">
+        <el-table-column prop="stock" sortable label="剩余库存">
+          <template #default="scope">
+            <span style="color: rgb(123 141 64);">{{ scope.row.stock }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="profits" label="总利润(5%手续费)">
           <template #default="scope">
             <span style="color: #f75e02;">{{ scope.row.profits }}</span>
           </template>
-        </el-table-column> -->
-        <el-table-column prop="djress1" label="出售">
-          <sell-order :sellPrice="sellOrderData" @addForSale="sellOrderF"></sell-order>
         </el-table-column>
-        <el-table-column fixed="right" label="状态">
+        <el-table-column fixed="right" label="操作">
           <template #default="scope">
-            <el-button link type="primary" size="small" @click.prevent="deleteOrder(scope.row.orderId)">
-              删除
-            </el-button>
+            <sell-order :sellPriceprops="scope.row"></sell-order>
+            <el-popover :visible="visible" placement="top" :width="160">
+              <p>确认删除？</p>
+              <div style="text-align: right; margin: 0">
+                <el-button @click.prevent="deleteOrder(scope.row.orderId)" size="small" text
+                  @click="visible = false">确认</el-button>
+              </div>
+              <template #reference>
+                <el-button @click="visible = true" link type="primary" size="small">
+                  删除
+                </el-button>
+              </template>
+            </el-popover>
           </template>
         </el-table-column>
       </el-table>
@@ -58,7 +70,7 @@
 <script setup>
 import msg from '@/utils/message.js'
 import { ref, reactive, onMounted, computed, nextTick } from "vue";
-import { post, get , DELETE} from '@/utils/http/httpbook'
+import { post, get, DELETE } from '@/utils/http/httpbook'
 import { storeToRefs } from 'pinia';
 import { useJx3book } from "@/pinia/useJx3book/useJx3book";
 import Search from '@/components/search/Search.vue';
@@ -122,11 +134,7 @@ const handleAddForSale = async (sellPrice) => {
   }
 };
 
-// 出售订单
-const sellOrderF = async (sellPrice) => {
-  const userId = util.getCookie('userid')
-  const res = await post('/api/sellorders', {})
-}
+
 // 搜索物品列表
 const fetchCities = async (query) => {
   try {
@@ -144,27 +152,26 @@ const fetchCities = async (query) => {
 };
 // 删除订单
 const deleteOrder = async (id) => {
-  console.log(id);
-  
+
   try {
-    const response = await DELETE('/api/delorders/',{id});
+    const response = await DELETE('/api/delorders/', { id });
     Jx3Store.orderInquiry()
     ElNotification({
-        title: '删除成功',
-        message: '删除成功',
-        type: 'success',
-        duration: 3000,
-        position: 'bottom-right',
-      })
+      title: '删除成功',
+      message: '删除成功',
+      type: 'success',
+      duration: 3000,
+      position: 'bottom-right',
+    })
     return response.data;
   } catch (error) {
     ElNotification({
-        title: '删除失败',
-        message: '删除失败',
-        type: 'error',
-        duration: 3000,
-        position: 'bottom-right',
-      })
+      title: '删除失败',
+      message: '删除失败',
+      type: 'error',
+      duration: 3000,
+      position: 'bottom-right',
+    })
     return [];
   }
 };

@@ -27,20 +27,13 @@
 <script setup>
 import { ref, computed } from 'vue';
 
-const props = defineProps({
-  addForSaleData: {
-    type: Object,
-    required: true,
-  },
-});
-
 const emit = defineEmits(['addForSale']);
 
 const sellPrice = ref({
-  jin: props.addForSaleData.sellPricejin || '',
-  yin: props.addForSaleData.sellPriceyin || '',
-  tong: props.addForSaleData.sellPricetong || '',
-  quantity: props.addForSaleData.sellPriceress || '1',
+  jin:'',
+  yin:'',
+  tong:'',
+  quantity:'1',
 });
 
 // 货币配置数组
@@ -71,7 +64,7 @@ const addForSale = () => {
 };
 </script>
 
-<style scoped>
+<style scoped lang="less">
 .item-actions {
   display: flex;
   align-items: center;
