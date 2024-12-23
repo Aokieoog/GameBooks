@@ -6,8 +6,8 @@
       <PriceInput @addForSale="handleAddForSale" />
     </div>
     <div class="containerright">
-      <el-table ref="table" :data="sortedTableData" border @row-click="sellTheGoods">
-        <el-table-column prop="createdAt" sortable label="买入时间">
+      <el-table ref="table" :data="sortedTableData" border @row-click="sellTheGoods" :height="tableHeight">
+        <el-table-column prop="createdAt" show-overflow-tooltip sortable label="买入时间">
           <template #default="scope">
             {{ util.formatDate(scope.row.createdAt) }}
           </template>
@@ -23,7 +23,7 @@
         </el-table-column>
         <el-table-column prop="totalValue" sortable label="买入单价">
           <template #default="scope">
-            <span style="color: #f75e02;">{{ numPad(unitPrice(scope.row.jin, scope.row.yin, scope.row.tong)) }}</span>
+            <span style="color: #f75e02;">{{ util.numPad(unitPrice(scope.row.jin, scope.row.yin, scope.row.tong)) }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="ress" sortable label="买入数量">
@@ -33,7 +33,7 @@
         </el-table-column>
         <el-table-column prop="totalValue" sortable label="总成本">
           <template #default="scope">
-            <span style="color: #f75e02;">{{ numPad(scope.row.totalValue) }}</span>
+            <span style="color: #f75e02;">{{ util.numPad(scope.row.totalValue) }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="stock" sortable label="剩余库存">
@@ -41,35 +41,36 @@
             <span style="color: rgb(123 141 64);">{{ scope.row.stock }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="profits" label="总利润(5%手续费)">
+        <!-- <el-table-column prop="profits" label="总利润(5%手续费)">
           <template #default="scope">
-            <span style="color: #f75e02;">{{ scope.row.profits }}</span>
+            <span style="color: #f75e02;">{{ totalSelling -scope.row.totalValue }}</span>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column fixed="right" label="操作">
           <template #default="scope">
-            <sell-order :sellPriceprops="scope.row"></sell-order>
-            <el-popover :visible="visible" placement="top" :width="160">
-              <p>确认删除？</p>
-              <div style="text-align: right; margin: 0">
-                <el-button @click.prevent="deleteOrder(scope.row.orderId)" size="small" text
-                  @click="visible = false">确认</el-button>
-              </div>
-              <template #reference>
-                <el-button @click="visible = true" link type="primary" size="small">
-                  删除
-                </el-button>
-              </template>
-            </el-popover>
+            <sell-order :sellPriceprops="scope.row.orderId" :call="scope.row.ress" @totalSellingPrice="totalSellingPrice"></sell-order>
+            <el-button @click="visibleshow(scope.row.orderId)" link type="primary" size="small">
+              删除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
   </div>
+  <el-dialog align-center v-model="visible" title="删除" width="300" draggable>
+    <span>确认删除？</span>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button type="primary" @click="deleteOrder(visible)">
+          确认
+        </el-button>
+      </div>
+    </template>
+  </el-dialog>
 </template>
 <script setup>
 import msg from '@/utils/message.js'
-import { ref, reactive, onMounted, computed, nextTick } from "vue";
+import { ref, reactive, onMounted, computed, onBeforeUnmount } from "vue";
 import { post, get, DELETE } from '@/utils/http/httpbook'
 import { storeToRefs } from 'pinia';
 import { useJx3book } from "@/pinia/useJx3book/useJx3book";
@@ -84,18 +85,29 @@ const Jx3Store = useJx3book()
 const { tableData } = storeToRefs(Jx3Store);
 const selectedCity = ref('')
 const tableDatac = ref([])
-const addForSaleData = ref({
-  sellPricejin: '',
-  sellPriceyin: '',
-  sellPricetong: '',
-  sellPriceress: '',
-});
+
+const tableHeight = ref(0);
+const visible = ref(false);
+const orderId = ref('')
+const totalSelling= ref(0)
 
 
 onMounted(() => {
   Jx3Store.orderInquiry()
   tableDatac.value = tableData
+  updateTableHeight();
+  window.addEventListener('resize', updateTableHeight);
 })
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', updateTableHeight);
+});
+
+const updateTableHeight = () => {
+  const windowHeight = window.innerHeight;
+  const padding = 150; // 根据实际情况调整表格的上、下边距
+  tableHeight.value = windowHeight - padding;
+};
 
 //时间排序
 const sortedTableData = computed(() => {
@@ -106,6 +118,10 @@ const sortedTableData = computed(() => {
 const handleSelect = (city) => {
   selectedCity.value = city;
 };
+const totalSellingPrice = (price) => {
+  totalSelling.value = price
+  console.log('总价:', totalSelling.value);
+}
 
 
 // 添加订单
@@ -151,10 +167,10 @@ const fetchCities = async (query) => {
   }
 };
 // 删除订单
-const deleteOrder = async (id) => {
+const deleteOrder = async () => {
 
   try {
-    const response = await DELETE('/api/delorders/', { id });
+    const response = await DELETE('/api/delorders/', { id: orderId.value });
     Jx3Store.orderInquiry()
     ElNotification({
       title: '删除成功',
@@ -163,6 +179,7 @@ const deleteOrder = async (id) => {
       duration: 3000,
       position: 'bottom-right',
     })
+    visible.value = false
     return response.data;
   } catch (error) {
     ElNotification({
@@ -176,21 +193,12 @@ const deleteOrder = async (id) => {
   }
 };
 
-// 定义一个函数，用于将数字转换为砖、金、银、铜的表示
-function numPad (amount) {
-  const units = ['砖', '金', '银', '铜'];
-  const dividers = [100000000, 10000, 100, 1]; // 对应砖、金、银、铜的分隔线
-
-  let result = [];
-  for (let i = 0; i < dividers.length; i++) {
-    const unitValue = Math.floor(amount / dividers[i]);
-    if (unitValue > 0) {
-      result.push(`${unitValue}${units[i]}`);
-    }
-    amount %= dividers[i];
-  }
-  return result.join('');
+const visibleshow = (id) => {
+  visible.value = true
+  orderId.value = id
 }
+
+
 
 // 计算总价
 function unitPrice (jin, yin, tong) {

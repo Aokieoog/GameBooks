@@ -1,87 +1,16 @@
 <template>
-  <div v-if="isVisible" class="scrolling-announcement">
-    <div class="announcement-content">
-      <span v-for="(item, index) in announcements" :key="'first-' + index" class="announcement-item">
-        {{ item }}
-      </span>
-      <!-- 复制一份公告内容，确保滚动时无缝衔接 -->
-      <span v-for="(item, index) in announcements" :key="'second-' + index" class="announcement-item">
-        {{ item }}
-      </span>
-    </div>
-    <!-- 关闭按钮 -->
-    <button class="close-btn" @click="closeAnnouncement">X</button>
-  </div>
+
 </template>
+
 
 <script setup>
 import { ref } from 'vue';
-// 响应式数据
-const isVisible = ref(true); // 控制公告是否显示
-const announcements = ref([
-  "公告1：网站更新，请查看。",
-  "公告2：服务器维护，敬请期待。",
-  "公告3：新活动上线，快来参与！",
-  // 可以继续添加更多公告
-]);
 
-// 关闭公告
-const closeAnnouncement = () => {
-  isVisible.value = false; // 设置为 false 以销毁 DOM
-};
+const variable = ref(null); // 示例变量
+
 </script>
 
-<style scoped>
-.scrolling-announcement {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 18px; /* 横幅高度 */
-  background-color: #f8f8f8;
-  padding: 3px 0; /* 内边距 */
-  z-index: 999;
-  overflow: hidden;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
 
-.announcement-content {
-  display: flex;
-  white-space: nowrap;
-  width: 100%; /* 容器宽度 */
-  animation: scroll-announcement 20s linear infinite;
-}
+<style scoped lang="scss">
 
-.announcement-item {
-  margin-right: 30px; /* 公告之间的间距 */
-  font-size: 12px; /* 字体大小 */
-  color: red; /* 字体颜色 */
-  text-align: center;
-}
-
-@keyframes scroll-announcement {
-  0% {
-    transform: translateX(100%); /* 从右边缘进入 */
-  }
-  100% {
-    transform: translateX(-100%); /* 完全滚动出左边缘 */
-  }
-}
-
-/* 关闭按钮样式 */
-.close-btn {
-  background: none;
-  border: none;
-  font-size: 20px;
-  color: #333;
-  cursor: pointer;
-  padding: 5px 10px;
-  margin-right: 10px;
-}
-
-.close-btn:hover {
-  color: red;
-}
 </style>
