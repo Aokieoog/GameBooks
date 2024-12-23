@@ -53,7 +53,7 @@ const Jx3Store = useJx3book()
 const tosellData = ref([]);
 const total_quantity = ref(0);
 const totalSellingPrice = ref(0);
-const emit = defineEmits(['totalSellingPrice']);
+// const emit = defineEmits(['totalSellingPrice']);
 const props = defineProps({
   sellPriceprops: {
     type: Number,
@@ -81,7 +81,8 @@ const addSoldOrders = async (data) => {
   });
   if (res.data.code == 200) {
     getSoldOrders();
-    Jx3Store.orderInquiry()
+    // Jx3Store.orderId = props.sellPriceprops
+    // Jx3Store.updateOrderTotalSellingPrice(props.sellPriceprops)
     ElNotification({
       title: '添加成功',
       message: res.data.message,
@@ -107,11 +108,13 @@ const getSoldOrders = async () => {
   });
   tosellData.value = res.data;
   total_quantity.value = 0;
+  let totalSellingPrice = 0;
   res.data.forEach(item => {
     total_quantity.value += item.quantity
-    totalSellingPrice.value += item.totalRevenue
+    totalSellingPrice += item.totalRevenue
   });
-  emit('totalSellingPrice',totalSellingPrice.value);
+  Jx3Store.orderInquiry()
+  Jx3Store.updateOrderTotalSellingPrice(props.sellPriceprops,totalSellingPrice)
 }
 
 // 删除出售数据

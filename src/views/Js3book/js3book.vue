@@ -41,14 +41,14 @@
             <span style="color: rgb(123 141 64);">{{ scope.row.stock }}</span>
           </template>
         </el-table-column>
-        <!-- <el-table-column prop="profits" label="总利润(5%手续费)">
+        <el-table-column prop="orderTotalRevenue" label="总利润(5%手续费)">
           <template #default="scope">
-            <span style="color: #f75e02;">{{ totalSelling -scope.row.totalValue }}</span>
+            <span style="color: #f75e02;">{{ scope.row.orderTotalRevenue - scope.row.totalValue }}</span>
           </template>
-        </el-table-column> -->
+        </el-table-column>
         <el-table-column fixed="right" label="操作">
           <template #default="scope">
-            <sell-order :sellPriceprops="scope.row.orderId" :call="scope.row.ress" @totalSellingPrice="totalSellingPrice"></sell-order>
+            <sell-order :sellPriceprops="scope.row.orderId" :call="scope.row.ress"></sell-order>
             <el-button @click="visibleshow(scope.row.orderId)" link type="primary" size="small">
               删除
             </el-button>
@@ -94,7 +94,7 @@ const totalSelling= ref(0)
 
 onMounted(() => {
   Jx3Store.orderInquiry()
-  tableDatac.value = tableData
+  // tableDatac.value = tableData
   updateTableHeight();
   window.addEventListener('resize', updateTableHeight);
 })
@@ -118,10 +118,10 @@ const sortedTableData = computed(() => {
 const handleSelect = (city) => {
   selectedCity.value = city;
 };
-const totalSellingPrice = (price) => {
-  totalSelling.value = price
-  console.log('总价:', totalSelling.value);
-}
+// const totalSellingPrice = (price) => {
+//   totalSelling.value = price
+//   console.log('总价:', totalSelling.value);
+// }
 
 
 // 添加订单
