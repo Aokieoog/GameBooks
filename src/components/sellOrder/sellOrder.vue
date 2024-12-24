@@ -24,7 +24,7 @@
           <span style="color: #f75e02;">{{ util.numPad(scope.row.price) }}</span>
         </template>
       </el-table-column>
-      <el-table-column property="quantity" show-overflow-tooltip label="售出数量" />
+      <el-table-column property="quantity" show-overflow-tooltip label="售出数��" />
       <el-table-column property="totalRevenue" show-overflow-tooltip label="售出总额">
         <template #default="scope">
           <span style="color: #f75e02;">{{ util.numPad(scope.row.totalRevenue) }}</span>
@@ -113,8 +113,8 @@ const getSoldOrders = async () => {
     total_quantity.value += item.quantity
     totalSellingPrice += item.totalRevenue
   });
-  Jx3Store.orderInquiry()
-  Jx3Store.updateOrderTotalSellingPrice(props.sellPriceprops,totalSellingPrice)
+  await Jx3Store.updateOrderTotalSellingPrice(props.sellPriceprops, totalSellingPrice)
+  await Jx3Store.orderInquiry()
 }
 
 // 删除出售数据
