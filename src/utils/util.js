@@ -47,15 +47,19 @@ export default {
   numPad (amount) {
     const units = ['砖', '金', '银', '铜'];
     const dividers = [100000000, 10000, 100, 1]; // 对应砖、金、银、铜的分隔线
-
-    let result = [];
-    for (let i = 0; i < dividers.length; i++) {
-      const unitValue = Math.floor(amount / dividers[i]);
-      if (unitValue > 0) {
-        result.push(`${unitValue}${units[i]}`);
+    if (amount > 0) {
+      let result = [];
+      for (let i = 0; i < dividers.length; i++) {
+        const unitValue = Math.floor(amount / dividers[i]);
+        if (unitValue > 0) {
+          result.push(`${unitValue}${units[i]}`);
+        }
+        amount %= dividers[i];
       }
-      amount %= dividers[i];
+      return result.join('');
     }
-    return result.join('');
+    if (amount < 0) {
+      return `-${this.numPad(-amount)}`;
+    }
   }
 }

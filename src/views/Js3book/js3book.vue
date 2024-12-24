@@ -4,6 +4,12 @@
       <span style="margin-right: 1.25rem;font-weight: 600;">物品名:</span>
       <Search style="margin-right: 1rem;" @handleSelect="handleSelect" :fetch-cities="fetchCities"></Search>
       <PriceInput @addForSale="handleAddForSale" />
+      <div class="profit-summary">
+        <span class="label">总利润:</span>
+        <span :class="{ 'profit-positive': totalProfit > 0, 'profit-negative': totalProfit <= 0 }">
+          {{ util.numPad(totalProfit) }}
+        </span>
+      </div>
     </div>
     <div class="containerright">
       <el-table ref="table" :data="sortedTableData" border @row-click="sellTheGoods" :height="tableHeight">
@@ -41,9 +47,11 @@
             <span style="color: rgb(123 141 64);">{{ scope.row.stock }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="orderTotalRevenue" label="总利润(5%手续费)">
+        <el-table-column label="总利润(5%手续费)">
           <template #default="scope">
-            <span style="color: #f75e02;">{{ scope.row.orderTotalRevenue - scope.row.totalValue }}</span>
+            <span :style="{ color: (scope.row.orderTotalRevenue - scope.row.totalValue) > 0 ? '#f75e02' : '#67c23a' }">
+              {{ util.numPad(scope.row.orderTotalRevenue - scope.row.totalValue) }}
+            </span>
           </template>
         </el-table-column>
         <el-table-column fixed="right" label="操作">
@@ -204,6 +212,14 @@ const visibleshow = (id) => {
 function unitPrice (jin, yin, tong) {
   return jin * 10000 + yin * 100 + tong
 }
+
+// 添加总利润计算
+const totalProfit = computed(() => {
+  return tableData.value.reduce((sum, item) => {
+    const orderProfit = item.orderTotalRevenue - item.totalValue;
+    return sum + orderProfit;
+  }, 0);
+});
 </script>
 
 <style scoped lang="less">
@@ -360,5 +376,24 @@ function unitPrice (jin, yin, tong) {
 
 :deep(.nameArticle .el-input__inner) {
   color: #7c1df1;
+}
+
+.profit-summary {
+  display: flex;
+  align-items: center;
+  margin-left: 1rem;
+  
+  .label {
+    font-weight: 600;
+    margin-right: 0.5rem;
+  }
+}
+
+.profit-positive {
+  color: #f75e02;
+}
+
+.profit-negative {
+  color: #67c23a;
 }
 </style>

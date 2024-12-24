@@ -7,11 +7,20 @@ export const useJx3book = defineStore('tableData', {
     userId: util.getCookie('userid'),
     tableData: JSON.parse(localStorage.getItem('jx3')) || [],
   }),
+  getters: {
+    totalProfit: (state) => {
+      return state.tableData.reduce((sum, item) => {
+        const profit = item.orderTotalRevenue - item.totalValue;
+        return sum + profit;
+      }, 0);
+    }
+  },
   actions: {
     async orderInquiry() {
       try {
         const response = await get('/api/orderInquiry', { userId: this.userId });
         this.tableData = response.data;
+        localStorage.setItem('jx3', JSON.stringify(response.data));
         return response.data;
       } catch (error) {
         console.error('Order inquiry failed:', error);
@@ -20,12 +29,10 @@ export const useJx3book = defineStore('tableData', {
     },
     async updateOrderTotalSellingPrice(orderId, orderTotalRevenue) {
       try {
-        // 等待更新完成
         const response = await post('/api/addOrderTotal', { 
           orderTotalRevenue: orderTotalRevenue, 
           orderId: orderId 
         });
-        // 不需要在这里调用 orderInquiry，由调用方决定何时刷新
         return response.data;
       } catch (error) {
         console.error('Add order failed:', error);

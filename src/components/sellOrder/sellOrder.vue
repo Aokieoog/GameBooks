@@ -24,7 +24,7 @@
           <span style="color: #f75e02;">{{ util.numPad(scope.row.price) }}</span>
         </template>
       </el-table-column>
-      <el-table-column property="quantity" show-overflow-tooltip label="售出数��" />
+      <el-table-column property="quantity" show-overflow-tooltip label="售出数量" />
       <el-table-column property="totalRevenue" show-overflow-tooltip label="售出总额">
         <template #default="scope">
           <span style="color: #f75e02;">{{ util.numPad(scope.row.totalRevenue) }}</span>
@@ -81,6 +81,7 @@ const addSoldOrders = async (data) => {
   });
   if (res.data.code == 200) {
     getSoldOrders();
+    Jx3Store.orderInquiry()
     // Jx3Store.orderId = props.sellPriceprops
     // Jx3Store.updateOrderTotalSellingPrice(props.sellPriceprops)
     ElNotification({
@@ -113,8 +114,8 @@ const getSoldOrders = async () => {
     total_quantity.value += item.quantity
     totalSellingPrice += item.totalRevenue
   });
-  await Jx3Store.updateOrderTotalSellingPrice(props.sellPriceprops, totalSellingPrice)
-  await Jx3Store.orderInquiry()
+  Jx3Store.updateOrderTotalSellingPrice(props.sellPriceprops,totalSellingPrice)
+  
 }
 
 // 删除出售数据
@@ -124,6 +125,8 @@ const deleteSoldOrders = async (id,stok) => {
     stock:stok,
   });
   if (res.status === 200) {
+    Jx3Store.orderInquiry() // 主表格刷新
+    getSoldOrders();
     ElNotification({
       title: '删除成功',
       message: '删除成功',
@@ -131,8 +134,6 @@ const deleteSoldOrders = async (id,stok) => {
       duration: 3000,
       position: 'bottom-right',
     });
-    getSoldOrders();
-    Jx3Store.orderInquiry()
   }
 }
 </script>
