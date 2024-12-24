@@ -5,9 +5,9 @@
       <Search style="margin-right: 1rem;" @handleSelect="handleSelect" :fetch-cities="fetchCities"></Search>
       <PriceInput @addForSale="handleAddForSale" />
       <div class="profit-summary">
-        <span class="label">总利润:</span>
-        <span :class="{ 'profit-positive': totalProfit > 0, 'profit-negative': totalProfit <= 0 }">
-          {{ util.numPad(totalProfit) }}
+        <span class="label" @click="profitShow=!profitShow">{{ profitShow?'总利润（税前）:':'总利润（税后）:' }}</span>
+        <span style="margin-right: 2rem;" :class="{ 'profit-positive': totalProfit > 0, 'profit-negative': totalProfit <= 0 }">
+          {{ profitShow?util.numPad(totalProfit):util.numPad(totalProfit*0.95) }}
         </span>
       </div>
     </div>
@@ -37,7 +37,7 @@
             <span style="color: rgb(123 141 64);">{{ scope.row.ress }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="totalValue" sortable label="总成本">
+        <el-table-column prop="totalValue" sortable label="成本">
           <template #default="scope">
             <span style="color: #f75e02;">{{ util.numPad(scope.row.totalValue) }}</span>
           </template>
@@ -47,7 +47,7 @@
             <span style="color: rgb(123 141 64);">{{ scope.row.stock }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="总利润(5%手续费)">
+        <el-table-column label="利润">
           <template #default="scope">
             <span :style="{ color: (scope.row.orderTotalRevenue - scope.row.totalValue) > 0 ? '#f75e02' : '#67c23a' }">
               {{ util.numPad(scope.row.orderTotalRevenue - scope.row.totalValue) }}
@@ -92,7 +92,7 @@ import SellOrder from '@/components/sellOrder/sellOrder.vue';
 const Jx3Store = useJx3book()
 const { tableData } = storeToRefs(Jx3Store);
 const selectedCity = ref('')
-const tableDatac = ref([])
+const profitShow = ref(false)
 
 const tableHeight = ref(0);
 const visible = ref(false);
@@ -381,7 +381,7 @@ const totalProfit = computed(() => {
 .profit-summary {
   display: flex;
   align-items: center;
-  margin-left: 1rem;
+  margin-left: 4rem;
   
   .label {
     font-weight: 600;

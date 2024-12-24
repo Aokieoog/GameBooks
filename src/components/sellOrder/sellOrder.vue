@@ -114,8 +114,9 @@ const getSoldOrders = async () => {
     total_quantity.value += item.quantity
     totalSellingPrice += item.totalRevenue
   });
-  Jx3Store.updateOrderTotalSellingPrice(props.sellPriceprops,totalSellingPrice)
-  
+  Jx3Store.updateOrderTotalSellingPrice(props.sellPriceprops, totalSellingPrice).then(() => {
+  Jx3Store.orderInquiry();
+});
 }
 
 // 删除出售数据

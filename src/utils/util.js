@@ -61,5 +61,9 @@ export default {
     if (amount < 0) {
       return `-${this.numPad(-amount)}`;
     }
+    if (amount === 0) {
+      return '0';
+      
+    }
   }
 }
