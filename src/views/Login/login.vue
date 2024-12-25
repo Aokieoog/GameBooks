@@ -64,7 +64,7 @@
 <script setup>
 import { ref, reactive } from 'vue';
 import { post } from '@/utils/http/httpbook'
-import message from '@/utils/message';
+import Eln from '@/utils/Eln';
 import { useRouter } from 'vue-router';
 import { Cookiebook } from '@/utils/cookie.js';
 import horizontalAnnouncement from "@/components/horizontalAnnouncement/horizontalAnnouncement.vue";
@@ -150,14 +150,15 @@ const onSubmit = async (type) => {
             email: form.email
           });
           if (res.status === 201) {
-            message.success(res.data.success);
+
+            Eln.success(res.data.success);
             switchToLogin()
           }
         } catch (error) {
-          message.error(error.response.data.error);
+          Eln.error(error.response.data.error);
         }
       } else {
-        message.warning('请检查表单输入是否正确');
+        Eln.warning('请检查表单输入是否正确');
       }
     })
   } else if (type === 'login') {
@@ -169,16 +170,16 @@ const onSubmit = async (type) => {
             password: form.password
           });
           if (res.status === 201) {
-            message.success('登录成功');
+            Eln.success('登录成功');
             Cookiebook('access_tokenbook', res.data.token);
             Cookiebook('userid', res.data.user.uid);
             router.push('/js3book');
           }
         } catch (error) {
-          message.error(error.response.data.error)
+          Eln.error(error.response.data.error);
         }
       } else {
-        message.warning('请检查表单输入是否正确');
+        Eln.warning('请检查表单输入是否正确');
       }
     })
   } else if (type === 'forget') {
@@ -189,13 +190,13 @@ const onSubmit = async (type) => {
             email: form.email
           });
           if (res.status === 201) {
-            message.success('请查收您的邮箱，并点击重置密码的链接');
+            Eln.success('请查收您的邮箱，并点击重置密码的链接');
           }
         } catch (error) {
-          message.error(error.response.data.error);
+          Eln.error(error.response.data.error);
         }
       } else {
-        message.warning('请检查表单输入是否正确');
+        Eln.warning('请检查表单输入是否正确');
       }
     })
   }

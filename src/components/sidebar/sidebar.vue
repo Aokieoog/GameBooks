@@ -1,6 +1,7 @@
 <script setup>
 import { reactive, ref, computed } from 'vue'
 import { useRoute } from 'vue-router';
+import logout from '@/components/logout/logout.vue'
 
 const datalist = reactive([
   { sidebar: '交易行账本', toa: 'js3book', icon: 'icon-dingdan', index: 0 },
@@ -22,13 +23,7 @@ const toacomputed = computed(() => {
       <el-menu-item v-for="(item, i) in datalist" :key="i" :index="item.toa">
         <template #title>{{ item.sidebar }}</template>
       </el-menu-item>
-      <el-sub-menu>
-        <template #title>
-          <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" />
-        </template>
-        <el-menu-item>修改密码</el-menu-item>
-        <el-menu-item>退出</el-menu-item>
-      </el-sub-menu>
+      <logout class="logout"></logout>
     </el-menu>
   </div>
 </template>
@@ -44,10 +39,10 @@ const toacomputed = computed(() => {
   height: 60px;
   z-index: 99999;
 }
-
-.el-menu--horizontal>.el-sub-menu:nth-last-child(1) {
+.logout {
   position: absolute;
-  right: 5rem;
-  top: .555rem;
+  bottom: 0;
+  right: 5.5rem;
 }
+
 </style>

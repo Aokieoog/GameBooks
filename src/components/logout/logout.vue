@@ -1,29 +1,48 @@
 <template>
-  <div class="profile-menu">
+  <div class="profile-menu" ref="menuWrapper">
     <div class="avatar" @click="toggleMenu">
       <img src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" alt="头像" />
     </div>
     <transition name="fade">
       <ul v-if="menuVisible" class="menu">
-        <li @click="logout">退出</li>
         <li @click="changePassword">修改密码</li>
+        <li @click="logout">退出登录</li>
       </ul>
     </transition>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-
+import { ref, onMounted, onBeforeUnmount } from 'vue';
+import util from '@/utils/util.js';
+import router from '@/router';
+import Eln from '@/utils/Eln';
 const menuVisible = ref(false);
+const menuWrapper = ref(null);
 
 const toggleMenu = () => {
   menuVisible.value = !menuVisible.value;
 };
 
+// 点击空白处关闭菜单
+const handleClickOutside = (event) => {
+  if (menuWrapper.value && !menuWrapper.value.contains(event.target)) {
+    menuVisible.value = false;
+  }
+};
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside);
+});
+
+onBeforeUnmount(() => {
+  document.removeEventListener('click', handleClickOutside);
+});
+
 const logout = () => {
-  alert("退出成功！");
-  // 添加退出逻辑
+  util.removeCookie("access_tokenbook");
+  router.push('/login');
+  Eln.success("退出成功");
 };
 
 const changePassword = () => {

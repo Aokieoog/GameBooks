@@ -77,7 +77,6 @@
   </el-dialog>
 </template>
 <script setup>
-import msg from '@/utils/message.js'
 import { ref, reactive, onMounted, computed, onBeforeUnmount } from "vue";
 import { post, get, DELETE } from '@/utils/http/httpbook'
 import { storeToRefs } from 'pinia';
@@ -85,8 +84,8 @@ import { useJx3book } from "@/pinia/useJx3book/useJx3book";
 import Search from '@/components/search/Search.vue';
 import PriceInput from '@/components/PriceInput/PriceInput.vue';
 import util from '@/utils/util.js'
-import { ElNotification } from 'element-plus'
 import SellOrder from '@/components/sellOrder/sellOrder.vue';
+import Eln from '@/utils/Eln';
 
 
 const Jx3Store = useJx3book()
@@ -136,21 +135,15 @@ const handleSelect = (city) => {
 const handleAddForSale = async (sellPrice) => {
   const userId = util.getCookie('userid')
   if (!selectedCity.value.itemId) {
-    return msg.error('请选择物品')
+    return Eln.error('请选择物品')
   } else if (!sellPrice.jin && !sellPrice.yin && !sellPrice.tong) {
-    return msg.error('请填写价格')
+    return Eln.error('请填写价格')
   }
   try {
     Object.assign(sellPrice, { itemId: selectedCity.value.itemId, userId });
     const response = await post('/api/orders', sellPrice);
     if (response.status === 201) {
-      ElNotification({
-        title: '添加成功',
-        message: response.data.message,
-        type: 'success',
-        duration: 3000,
-        position: 'bottom-right',
-      })
+      Eln.success('添加成功')
       Jx3Store.orderInquiry()
     }
   } catch (error) {
@@ -180,23 +173,11 @@ const deleteOrder = async () => {
   try {
     const response = await DELETE('/api/delorders/', { id: orderId.value });
     Jx3Store.orderInquiry()
-    ElNotification({
-      title: '删除成功',
-      message: '删除成功',
-      type: 'success',
-      duration: 3000,
-      position: 'bottom-right',
-    })
+    Eln.success('删除成功')
     visible.value = false
     return response.data;
   } catch (error) {
-    ElNotification({
-      title: '删除失败',
-      message: '删除失败',
-      type: 'error',
-      duration: 3000,
-      position: 'bottom-right',
-    })
+    Eln.error('删除失败')
     return [];
   }
 };

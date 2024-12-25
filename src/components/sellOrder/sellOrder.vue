@@ -45,15 +45,12 @@ import { ref, reactive, defineProps,defineEmits, onMounted, computed, nextTick }
 import PriceInput from '@/components/PriceInput/PriceInput.vue';
 import util from '@/utils/util.js'
 import { post, get, DELETE } from '@/utils/http/httpbook'
-import { ElNotification } from 'element-plus'
 import { useJx3book } from "@/pinia/useJx3book/useJx3book";
-import msg from '@/utils/message.js'
+import Eln from "@/utils/Eln";
 
 const Jx3Store = useJx3book()
 const tosellData = ref([]);
 const total_quantity = ref(0);
-const totalSellingPrice = ref(0);
-// const emit = defineEmits(['totalSellingPrice']);
 const props = defineProps({
   sellPriceprops: {
     type: Number,
@@ -68,7 +65,7 @@ const props = defineProps({
 // 添加出售数据
 const addSoldOrders = async (data) => {
   if (!data.jin && !data.yin && !data.tong) {
-    return msg.error('请填写价格')
+    return Eln.error('请填写价格')
   }
   const res = await post('/api/order/sell', {
     "orderId": props.sellPriceprops,
@@ -84,21 +81,9 @@ const addSoldOrders = async (data) => {
     Jx3Store.orderInquiry()
     // Jx3Store.orderId = props.sellPriceprops
     // Jx3Store.updateOrderTotalSellingPrice(props.sellPriceprops)
-    ElNotification({
-      title: '添加成功',
-      message: res.data.message,
-      type: 'success',
-      duration: 3000,
-      position: 'bottom-right',
-    });
+    Eln.success('添加成功')
   } else {
-    ElNotification({
-      title: '添加失败',
-      message: res.data.message,
-      type: 'error',
-      duration: 3000,
-      position: 'bottom-right',
-    });
+    Eln.error(res.data.message)
   }
 }
 
@@ -128,13 +113,7 @@ const deleteSoldOrders = async (id,stok) => {
   if (res.status === 200) {
     Jx3Store.orderInquiry() // 主表格刷新
     getSoldOrders();
-    ElNotification({
-      title: '删除成功',
-      message: '删除成功',
-      type: 'success',
-      duration: 3000,
-      position: 'bottom-right',
-    });
+    Eln.success('删除成功');
   }
 }
 </script>

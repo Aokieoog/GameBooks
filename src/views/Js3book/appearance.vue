@@ -281,13 +281,13 @@
 </template>
 
 <script setup>
-import msg from '@/utils/message.js'
 import { post, get, patch, DELETE } from '@/utils/http/http';
 import { ref, reactive, onMounted, computed } from 'vue';
 import {Cookie} from '@/utils/cookie.js'
 import util from '@/utils/util.js'
 import { useJxwg } from "@/pinia/useJx3book/userJxwg.js";
 import { storeToRefs } from 'pinia';
+import Eln from '@/utils/Eln';
 const store = useJxwg()
 const { tableDatakcs, tableDatascs } = storeToRefs(store);
 
@@ -374,11 +374,11 @@ async function Zhuceq () {
     if (res.status === 201) {
       passshow.value = true
       zhuceshow.value = false
-      msg.success('注册成功');
+      Eln.success('注册成功');
     }
   } catch (error) {
     if (error.response.data.detail == 'User Already Exists') {
-      msg.error('用户已存在');
+      Eln.error('用户已存在');
     }
   }
 }
@@ -408,18 +408,18 @@ async function FindPassword () {
   try {
     let res = await post('/user/request-reset', data)
     if (res.status === 200) {
-    msg.success('密码重置链接发送到电子邮件')
+    Eln.success('密码重置链接发送到电子邮件')
   }
   } catch (error) {
     if (error.response.data.detail == 'User not found') {
-      msg.error('请联系管理员')
+      Eln.error('请联系管理员')
     }
   }
 }
 // 退出
 function logout () {
   util.removeCookie('access_token')
-  msg.success('退出成功')
+  Eln.success('退出成功')
   loginshow.value = false
   tableDatakcs.value = [];
   tableDatascs.value = [];
@@ -434,7 +434,7 @@ async function Mystocks (params) {
   if (token) {
     loginshow.value = true
   } else {
-    return msg.success('请先登录')
+    return Eln.success('请先登录')
   }
   let resmystocks = await get('/stock/mystocks')
   const tableDatakc = resmystocks.data.filter(item => item.sale == 0)
@@ -571,7 +571,7 @@ async function Sold (e) {
     }
     const res = await patch('/stock/stocksell', params)
     if (res.status == 200) {
-      msg.success('出售成功')
+      Eln.success('出售成功')
       dialogVisibleb.value = false
       await Mystocks()
     }
@@ -580,11 +580,11 @@ async function Sold (e) {
     console.log(fromdata.id);
     const res = await DELETE('/stock/delete', params)
     if (res.status == 204) {
-      msg.success('删除成功')
+      Eln.success('删除成功')
       dialogVisibleb.value = false
       await Mystocks()
     } else {
-      msg.error('删除失败')
+      Eln.error('删除失败')
     }
   }
 }
@@ -606,7 +606,7 @@ async function addkc () {
     }
     const res = await patch('/stock/stockupdate', params)
     if (res.status === 200) {
-      msg.success('编辑成功')
+      Eln.success('编辑成功')
       dialogVisiblek.value = false
       await Mystocks()
     }
@@ -623,11 +623,11 @@ async function addkc () {
     }
     const res = await post('/stock/stockcreate', params)
     if (res.status === 201) {
-      msg.success('添加成功')
+      Eln.success('添加成功')
       dialogVisiblek.value = false
       await Mystocks()
     } else {
-      msg.error('添加失败')
+      Eln.error('添加失败')
     }
   }
 }
