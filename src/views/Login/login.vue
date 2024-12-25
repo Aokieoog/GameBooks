@@ -8,13 +8,13 @@
       <el-form :rules="rules" ref="rigForm" v-show="data.teileRigShow" :model="form" label-width="auto"
         style="min-width: 300px;padding-top: 2rem;" label-position="left">
         <el-form-item prop="loginAccount" label="账号">
-          <el-input v-model="form.loginAccount" />
+          <el-input name="loginAccount" v-model="form.loginAccount" />
         </el-form-item>
         <el-form-item prop="password" label="密码">
-          <el-input v-model="form.password" type="password" />
+          <el-input name="password" v-model="form.password" type="password" />
         </el-form-item>
         <el-form-item prop="email" label="邮箱">
-          <el-input v-model="form.email" />
+          <el-input name="email" v-model="form.email" />
         </el-form-item>
         <el-form-item label="">
           <div style="display: flex;justify-content: space-between;width: 100%;">
@@ -27,10 +27,10 @@
       <el-form :rules="rules" ref="lgionForm" v-show="data.teileLogShow" :model="form" label-width="auto"
         style="min-width: 300px;padding-top: 2rem;" label-position="left">
         <el-form-item prop="loginAccount" label="账号">
-          <el-input v-model="form.loginAccount" />
+          <el-input name="loginAccount" v-model="form.loginAccount" />
         </el-form-item>
         <el-form-item prop="password" label="密码">
-          <el-input v-model="form.password" type="password" />
+          <el-input name="password" v-model="form.password" type="password" />
         </el-form-item>
         <el-form-item label="">
           <div style="display: flex;justify-content: space-between;width: 100%;">
@@ -43,7 +43,7 @@
       <el-form :rules="rules" ref="zhForm" v-show="data.teileForgetShow" :model="form" label-width="auto"
         style="min-width: 300px;padding-top: 2rem;" label-position="left">
         <el-form-item prop="email" label="邮箱">
-          <el-input v-model="form.email" />
+          <el-input name="email" v-model="form.email" />
         </el-form-item>
         <el-form-item label="">
           <div style="display: flex;justify-content: space-between;width: 100%;">
@@ -68,6 +68,7 @@ import Eln from '@/utils/Eln';
 import { useRouter } from 'vue-router';
 import { Cookiebook } from '@/utils/cookie.js';
 import horizontalAnnouncement from "@/components/horizontalAnnouncement/horizontalAnnouncement.vue";
+import util from '@/utils/util';
 
 const router = useRouter()
 
@@ -139,7 +140,7 @@ const goNotice = () => {
 }
 
 // 提交表单
-const onSubmit = async (type) => {
+const onSubmit =  async (type) => {
   if (type === 'register') {
     rigForm.value.validate(async (valid) => {
       if (valid) {

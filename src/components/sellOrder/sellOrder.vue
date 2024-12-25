@@ -41,7 +41,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, defineProps,defineEmits, onMounted, computed, nextTick } from "vue";
+import { ref, defineProps} from "vue";
 import PriceInput from '@/components/PriceInput/PriceInput.vue';
 import util from '@/utils/util.js'
 import { post, get, DELETE } from '@/utils/http/httpbook'
@@ -63,7 +63,7 @@ const props = defineProps({
 })
 
 // 添加出售数据
-const addSoldOrders = async (data) => {
+const addSoldOrders = util.throttle( async (data) => {
   if (!data.jin && !data.yin && !data.tong) {
     return Eln.error('请填写价格')
   }
@@ -79,13 +79,11 @@ const addSoldOrders = async (data) => {
   if (res.data.code == 200) {
     getSoldOrders();
     Jx3Store.orderInquiry()
-    // Jx3Store.orderId = props.sellPriceprops
-    // Jx3Store.updateOrderTotalSellingPrice(props.sellPriceprops)
     Eln.success('添加成功')
   } else {
     Eln.error(res.data.message)
   }
-}
+},1000);
 
 // 获取出售数据
 const getSoldOrders = async () => {

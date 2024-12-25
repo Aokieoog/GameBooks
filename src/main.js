@@ -14,7 +14,6 @@ import './assets/animate.css'
 import SvgIcon from './components/svgIconFont/svgIcon.vue'
 import './assets/svgIconFont/svgIconFont'
 /* message */
-import message from './utils/message.js'
 /* echarts */
 import * as echarts from 'echarts'
 import { createPinia } from 'pinia'

@@ -37,16 +37,16 @@
         <el-dialog v-model="dialogVisible" :title="zhuceshow ? '注册账号' : passshow ? '登录账号' : '找回密码'" width="500" center>
           <el-form :model="form" label-width="6.25rem" style="max-width: 25rem">
             <el-form-item v-show="zhuceshow" label="用户名:">
-              <el-input type="text" v-model="form.user_name"></el-input>
+              <el-input name="user_name" type="text" v-model="form.user_name"></el-input>
             </el-form-item>
             <el-form-item label="注册邮箱:">
-              <el-input type="emil" v-model="form.mail" />
+              <el-input name="mail" type="emil" v-model="form.mail" />
             </el-form-item>
             <el-form-item v-show="zhuceshow" label="QQ:">
-              <el-input type="text" v-model="form.qq" />
+              <el-input name="qq" type="text" v-model="form.qq" />
             </el-form-item>
             <el-form-item v-show="passshow" label="登录密码:">
-              <el-input type="password" v-model="form.password" />
+              <el-input name="password" type="password" v-model="form.password" />
             </el-form-item>
           </el-form>
           <div style="display:flex;justify-content:space-around;">

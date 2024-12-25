@@ -132,7 +132,7 @@ const handleSelect = (city) => {
 
 
 // 添加订单
-const handleAddForSale = async (sellPrice) => {
+const handleAddForSale = util.throttle( async (sellPrice) => {
   const userId = util.getCookie('userid')
   if (!selectedCity.value.itemId) {
     return Eln.error('请选择物品')
@@ -149,7 +149,9 @@ const handleAddForSale = async (sellPrice) => {
   } catch (error) {
     console.error('Error:', error);
   }
-};
+}, 1000);
+
+
 
 
 // 搜索物品列表

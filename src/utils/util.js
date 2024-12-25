@@ -65,5 +65,17 @@ export default {
       return '0';
       
     }
+  },
+
+  // 防抖函数
+  throttle(func, delay) {
+    let lastCall = 0; // 记录上一次调用的时间
+    return function (...args) {
+      const now = Date.now(); // 获取当前时间
+      if (now - lastCall >= delay) {
+        lastCall = now;
+        func.apply(this, args); // 执行目标函数
+      }
+    };
   }
 }
