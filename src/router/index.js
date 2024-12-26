@@ -23,7 +23,7 @@ const routes = [
     name: 'jx3home',
     meta: {
       fullPageDisplay: true,
-      title: '登录'
+      title: '公告'
     },
     component: () => import('@/views/Home/jx3home.vue')
   },
@@ -32,7 +32,7 @@ const routes = [
     name: 'js3book',
     meta: {
       fullPageDisplay: false, //不需要全页展示的组件
-      title: '账单'
+      title: '剑网三交易行'
     },
     component: () => import('@/views/Js3book/js3book.vue')
   },{
@@ -40,7 +40,7 @@ const routes = [
     name: 'appearance',
     meta: {
       fullPageDisplay: false,
-      title: 'appearance'
+      title: '剑网三外观'
     },
     component: () => import('@/views/Js3book/appearance.vue')
   },
@@ -48,24 +48,21 @@ const routes = [
     path: '/test',
     name: 'test',
     meta: {
-      fullPageDisplay: true,
-      title: 'test'
-    },
-    component: () => import('@/components/test.vue')
-  },
-  {
-    path: '/counter',
-    name: 'counter',
-    meta: {
       fullPageDisplay: true
     },
-    component: () => import('@/dome/counter.vue')
+    component: () => import('@/dome/test.vue')
   }
 ]
 const router = createRouter({
   history: createWebHistory(),
   routes: routes
 })
+router.beforeEach((to) => {
+  // 根据路由的 meta 设置页面标题
+  if (to.meta.title) {
+    document.title = to.meta.title;
+  }
+});
 
 // 请求接口获取动态路由配置
 // async function getRoutesFromApi() {
