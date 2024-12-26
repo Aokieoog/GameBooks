@@ -9,6 +9,7 @@ export default defineConfig({
       overwrite: true,
       html: true,
       json: true,
+      inlineAssets: true,
     },
   },
 });

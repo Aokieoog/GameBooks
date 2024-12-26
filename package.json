@@ -8,7 +8,7 @@
     "pro": "vite --mode pro",
     "build": "vite build --mode pro",
     "preview": "vite preview",
-    "test": "vitest --reporter mochawesome --passWithNoTests"
+    "test": "mkdir -p mochawesome-report && vitest --reporter mochawesome"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
