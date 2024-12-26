@@ -2,12 +2,12 @@ import { createRouter, createWebHistory } from 'vue-router'
 const routes = [
   {
     path: '/',
-    name: 'jx3home',
+    name: 'login',
     meta: {
       fullPageDisplay: true,
-      title: '欢迎'
+      title: '登录'
     },
-    component: () => import('@/views/Home/jx3home.vue')
+    component: () => import('@/views/Login/login.vue')
   },
   {
     path: '/:pathMatch(.*)',
@@ -19,13 +19,13 @@ const routes = [
     component: () => import('@/views/404.vue')
   },
   {
-    path: '/login',
-    name: 'login',
+    path: '/jx3home',
+    name: 'jx3home',
     meta: {
       fullPageDisplay: true,
       title: '登录'
     },
-    component: () => import('@/views/Login/login.vue')
+    component: () => import('@/views/Home/jx3home.vue')
   },
   {
     path: '/js3book',//剑三记账本

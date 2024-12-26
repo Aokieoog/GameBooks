@@ -136,7 +136,7 @@ const switchToForget = () => {
 
 const goNotice = () => {
   // 跳转到公告页
-  router.push('/')
+  router.push('/jx3home')
 }
 
 // 提交表单

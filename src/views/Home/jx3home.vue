@@ -1,5 +1,5 @@
 <template>
-  <div class="announcement-page">
+  <div class="announcement-page" @click="Login">
     <div class="announcement-header">
       <h2 class="announcement-title">公告</h2>
       <p class="announcement-intro">
@@ -33,6 +33,7 @@
 import { ref } from 'vue';
 
 const announcements = ref([
+  { date: '2024年12月26日', content: '升级中', isDeleted: false },
   { date: '2024年12月21日', content: '数据云端储存，移除本地储存逻辑。<br>优化登录页面，公告页面 UI 更改。<br>重做交易行新增订单逻辑。', isDeleted: false },
   { date: '2024年11月13日', content: '修复了外观添加失败问题', isDeleted: false },
   { date: '2024年10月15日', content: '增加了外观统计页面，使用了废牛记账本的API，因此与废牛记账本数据互通。', isDeleted: false },
@@ -41,6 +42,9 @@ const announcements = ref([
   { date: '2024年4月5日', content: '修复了登录页面闪退的Bug，改善了用户体验。', isDeleted: false },
   // 更多公告项
 ]);
+const Login = () => {
+  router.push({ name: 'Login' });
+}
 </script>
 
 <style scoped lang="less">
