@@ -4,8 +4,8 @@ import { useRoute } from 'vue-router';
 import logout from '@/components/logout/logout.vue'
 
 const datalist = reactive([
-  { sidebar: '交易行账本', toa: 'js3book', icon: 'icon-dingdan', index: 0 },
-  { sidebar: '外观账本', toa: 'appearance', icon: 'icon-dingdan', index: 1 },
+  { sidebar: '交易行', toa: 'js3book', icon: 'icon-dingdan', index: 0 },
+  { sidebar: '外观', toa: 'appearance', icon: 'icon-dingdan', index: 1 },
 ]
 )
 const route = useRoute();

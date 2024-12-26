@@ -35,15 +35,6 @@ const routes = [
       title: '账单'
     },
     component: () => import('@/views/Js3book/js3book.vue')
-  },
-  {
-    path: '/jx3user',
-    name: 'jx3user',
-    meta: {
-      fullPageDisplay: false,
-      title: 'jx3user'
-    },
-    component: () => import('@/views/Js3book/Jx3user.vue')
   },{
     path: '/appearance',
     name: 'appearance',
