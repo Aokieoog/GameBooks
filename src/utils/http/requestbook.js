@@ -9,7 +9,7 @@ const requestbook = axios.create({
   // 获取环境变量中的 API 基础路径
   baseURL: import.meta.env.VITE_BASE_URLBOOK,
   timeout: 3000, // 请求超时时间
-  withCredentials: true, 
+  // withCredentials: true, 
 })
 
 
