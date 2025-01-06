@@ -148,9 +148,8 @@ const onSubmit =  async (type) => {
             password: form.password,
             email: form.email
           });
-          if (res.status === 201) {
-
-            Eln.success(res.data.success);
+          if (res.data.code === 200) {
+            Eln.success(res.data.message);
             switchToLogin()
           }else{
             Eln.error('请求错误');
@@ -166,13 +165,13 @@ const onSubmit =  async (type) => {
             loginAccount: form.loginAccount,
             password: form.password
           });
-          if (res.status === 201) {
+          if (res.data.code == 200) {
             Eln.success('登录成功');
             Cookiebook('access_tokenbook', res.data.token);
             Cookiebook('userid', res.data.user.uid);
             router.push('/js3book');
           }else{
-            Eln.error(res.data.error);
+            Eln.error(res.data.message);
           }
       } else {
         Eln.warning('请检查表单输入是否正确');
@@ -184,7 +183,7 @@ const onSubmit =  async (type) => {
           const res = await post('/api/forget-password', {
             email: form.email
           });
-          if (res.status === 201) {
+          if (res.data.code === 200) {
             Eln.success('请查收您的邮箱，并点击重置密码的链接');
           }else{
             Eln.error('请求错误');

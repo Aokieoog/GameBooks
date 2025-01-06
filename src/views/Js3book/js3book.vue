@@ -142,7 +142,7 @@ const handleAddForSale = util.throttle( async (sellPrice) => {
   try {
     Object.assign(sellPrice, { itemId: selectedCity.value.itemId, userId });
     const response = await post('/api/orders', sellPrice);
-    if (response.status === 201) {
+    if (response.data.code === 200) {
       Eln.success('添加成功')
       Jx3Store.orderInquiry()
     }
