@@ -172,7 +172,7 @@ const onSubmit =  async (type) => {
             Cookiebook('userid', res.data.user.uid);
             router.push('/js3book');
           }else{
-            Eln.error('请求错误');
+            Eln.error(res.data.error);
           }
       } else {
         Eln.warning('请检查表单输入是否正确');
