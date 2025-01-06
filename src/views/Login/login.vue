@@ -27,10 +27,10 @@
       <el-form :rules="rules" ref="lgionForm" v-show="data.teileLogShow" :model="form" label-width="auto"
         style="min-width: 300px;padding-top: 2rem;" label-position="left">
         <el-form-item prop="loginAccount" label="账号">
-          <el-input name="loginAccount" v-model="form.loginAccount" />
+          <el-input name="loginAccount" placeholder="请输入账号" v-model="form.loginAccount" />
         </el-form-item>
         <el-form-item prop="password" label="密码">
-          <el-input name="password" v-model="form.password" type="password" />
+          <el-input name="password" placeholder="请输入密码" v-model="form.password" type="password" />
         </el-form-item>
         <el-form-item label="">
           <div style="display: flex;justify-content: space-between;width: 100%;">
@@ -84,8 +84,8 @@ const rigForm = ref(null)
 const lgionForm = ref(null)
 const zhForm = ref(null)
 const form = reactive({
-  loginAccount: '123456',
-  password: '123456',
+  loginAccount: '',
+  password: '',
   email: ''
 })
 
