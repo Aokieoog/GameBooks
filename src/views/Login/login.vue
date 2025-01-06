@@ -1,7 +1,6 @@
 <template>
   <div class="login">
     <horizontalAnnouncement></horizontalAnnouncement>
-    <!-- <h1>{{ currentTitle }}</h1> -->
     <a @click="goNotice" style="margin-top: 8%;">公告</a>
     <div class="login-form">
       <!-- 注册 -->
