@@ -35,10 +35,10 @@ requestbook.interceptors.request.use(
         router.push('/login');
       }, 2000);
     }
-    // if (token) {
-    //   // 如果有 token，添加到请求头
-    //   config.headers['Authorization'] = `Bearer ${token}`;
-    // }
+    if (token) {
+      // 如果有 token，添加到请求头
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
     return config
   },
   error => {
