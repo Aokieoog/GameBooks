@@ -18,7 +18,7 @@ requestbook.interceptors.request.use(
     // 获取 token
     let token = util.getCookie('access_tokenbook');
     // 定义不需要 token 的请求路径
-    const noAuthPaths = ['/api/register', '/api/login', '/api/forgot-password'];
+    const noAuthPaths = ['/register', '/login', '/forgot-password'];
     // 检查请求路径是否在不需要 token 的列表中
     const isNoAuthPath = noAuthPaths.some(path => config.url.includes(path));
     if (!token && !isNoAuthPath) {

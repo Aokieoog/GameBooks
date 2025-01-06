@@ -143,7 +143,6 @@ const onSubmit =  async (type) => {
   if (type === 'register') {
     rigForm.value.validate(async (valid) => {
       if (valid) {
-        try {
           const res = await post('/api/users', {
             loginAccount: form.loginAccount,
             password: form.password,
@@ -153,10 +152,9 @@ const onSubmit =  async (type) => {
 
             Eln.success(res.data.success);
             switchToLogin()
+          }else{
+            Eln.error('请求错误');
           }
-        } catch (error) {
-          Eln.error('请求错误');
-        }
       } else {
         Eln.warning('请检查表单输入是否正确');
       }
@@ -164,7 +162,6 @@ const onSubmit =  async (type) => {
   } else if (type === 'login') {
     lgionForm.value.validate(async (valid) => {
       if (valid) {
-        try {
           const res = await post('/api/login', {
             loginAccount: form.loginAccount,
             password: form.password
@@ -174,10 +171,9 @@ const onSubmit =  async (type) => {
             Cookiebook('access_tokenbook', res.data.token);
             Cookiebook('userid', res.data.user.uid);
             router.push('/js3book');
+          }else{
+            Eln.error('请求错误');
           }
-        } catch (error) {
-          Eln.error('请求错误');
-        }
       } else {
         Eln.warning('请检查表单输入是否正确');
       }
@@ -185,16 +181,14 @@ const onSubmit =  async (type) => {
   } else if (type === 'forget') {
     zhForm.value.validate(async (valid) => {
       if (valid) {
-        try {
           const res = await post('/api/forget-password', {
             email: form.email
           });
           if (res.status === 201) {
             Eln.success('请查收您的邮箱，并点击重置密码的链接');
+          }else{
+            Eln.error('请求错误');
           }
-        } catch (error) {
-          Eln.error('请求错误');
-        }
       } else {
         Eln.warning('请检查表单输入是否正确');
       }
