@@ -9,7 +9,7 @@ export default () =>  defineConfig({
       '@': path.resolve(__dirname, 'src')
     }
   },
-  // 代理配置
+  // 本地代理配置
   server: {
     port: 5173,
     proxy: {
@@ -20,7 +20,7 @@ export default () =>  defineConfig({
         rewrite: (path) => path.replace(/^\/dev/, '') // 重写路径，替换 /dev
       },
       '/api': {
-        target: process.env.VITE_API_BASE_URL, //目标url
+        target: "http://localhost:3000", //目标url
         changeOrigin: true, //支持跨域
         //重写路径,替换/dev
         rewrite: (path) => path.replace(/^\/api/, '') 
