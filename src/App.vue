@@ -73,6 +73,8 @@ const route = useRoute();
 // }
 /* 全局路由 */
 .globalRouting {
+  margin: 0;
+  padding: 0;
   height: 100vh;
   display: flex;
   align-items: center;

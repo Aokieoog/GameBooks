@@ -412,7 +412,7 @@ async function FindPassword () {
   }
   } catch (error) {
     if (error.response.data.detail == 'User not found') {
-      Eln.error('请联系管理员')
+      Eln.error('未找到用户')
     }
   }
 }

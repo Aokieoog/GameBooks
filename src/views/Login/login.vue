@@ -7,13 +7,13 @@
       <el-form :rules="rules" ref="rigForm" v-show="data.teileRigShow" :model="form" label-width="auto"
         style="min-width: 300px;padding-top: 2rem;" label-position="left">
         <el-form-item prop="loginAccount" label="账号">
-          <el-input name="loginAccount" v-model="form.loginAccount" />
+          <el-input name="loginAccount" placeholder="请输入账号" v-model="form.loginAccount" />
         </el-form-item>
         <el-form-item prop="password" label="密码">
-          <el-input name="password" v-model="form.password" type="password" />
+          <el-input name="password" placeholder="请输入密码" v-model="form.password" type="password" />
         </el-form-item>
         <el-form-item prop="email" label="邮箱">
-          <el-input name="email" v-model="form.email" />
+          <el-input name="email" placeholder="请输入邮箱" v-model="form.email" />
         </el-form-item>
         <el-form-item label="">
           <div style="display: flex;justify-content: space-between;width: 100%;">
@@ -42,7 +42,7 @@
       <el-form :rules="rules" ref="zhForm" v-show="data.teileForgetShow" :model="form" label-width="auto"
         style="min-width: 300px;padding-top: 2rem;" label-position="left">
         <el-form-item prop="email" label="邮箱">
-          <el-input name="email" v-model="form.email" />
+          <el-input name="email" placeholder="请输入邮箱" v-model="form.email" />
         </el-form-item>
         <el-form-item label="">
           <div style="display: flex;justify-content: space-between;width: 100%;">
@@ -155,7 +155,7 @@ const onSubmit =  async (type) => {
             switchToLogin()
           }
         } catch (error) {
-          Eln.error(error.response.data.error);
+          Eln.error('请求错误');
         }
       } else {
         Eln.warning('请检查表单输入是否正确');
@@ -176,7 +176,7 @@ const onSubmit =  async (type) => {
             router.push('/js3book');
           }
         } catch (error) {
-          Eln.error(error.response.data.error);
+          Eln.error('请求错误');
         }
       } else {
         Eln.warning('请检查表单输入是否正确');
@@ -193,7 +193,7 @@ const onSubmit =  async (type) => {
             Eln.success('请查收您的邮箱，并点击重置密码的链接');
           }
         } catch (error) {
-          Eln.error(error.response.data.error);
+          Eln.error('请求错误');
         }
       } else {
         Eln.warning('请检查表单输入是否正确');

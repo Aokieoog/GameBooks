@@ -23,7 +23,7 @@ export const useJx3book = defineStore('tableData', {
         localStorage.setItem('jx3', JSON.stringify(response.data));
         return response.data;
       } catch (error) {
-        console.error('Order inquiry failed:', error);
+        console.error("获取数据失败:", error);
         throw error;
       }
     },
@@ -35,7 +35,7 @@ export const useJx3book = defineStore('tableData', {
         });
         return response.data;
       } catch (error) {
-        console.error('Add order failed:', error);
+        console.error("获取数据失败:", error);
         throw error;
       }
     },
