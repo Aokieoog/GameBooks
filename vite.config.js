@@ -20,7 +20,7 @@ export default () =>  defineConfig({
         rewrite: (path) => path.replace(/^\/dev/, '') // 重写路径，替换 /dev
       },
       '/api': {
-        target: "http://localhost:3000", //目标url
+        target: process.env.VITE_API_BASE_URL, //目标url
         changeOrigin: true, //支持跨域
         //重写路径,替换/dev
         rewrite: (path) => path.replace(/^\/api/, '') 
