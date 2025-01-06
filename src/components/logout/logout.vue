@@ -40,9 +40,11 @@ onBeforeUnmount(() => {
 });
 
 const logout = () => {
-  util.removeCookie("access_tokenbook");
-  router.push('/login');
   Eln.success("退出成功");
+  setTimeout(() => {
+    util.removeCookie("access_tokenbook");
+    router.push('/');
+  }, 1000);
 };
 
 const changePassword = () => {
