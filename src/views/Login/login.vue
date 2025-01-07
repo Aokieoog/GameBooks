@@ -167,7 +167,7 @@ const onSubmit =  async (type) => {
             loginAccount: form.loginAccount,
             password: form.password
           });
-          if (res.data.code == 200) {
+          if (res.data.code === 200) {
             Eln.success('登录成功');
             Cookiebook('access_tokenbook', res.data.token);
             Cookiebook('userid', res.data.user.uid);
