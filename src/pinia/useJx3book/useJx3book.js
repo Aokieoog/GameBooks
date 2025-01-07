@@ -4,7 +4,7 @@ import util from '@/utils/util';
 
 export const useJx3book = defineStore('tableData', {
   state: () => ({
-    userId: util.getCookie('userid'),
+    // userId: util.getCookie('userid'),
     tableData: JSON.parse(localStorage.getItem('jx3')) || [],
   }),
   getters: {
@@ -18,7 +18,7 @@ export const useJx3book = defineStore('tableData', {
   actions: {
     async orderInquiry() {
       try {
-        const response = await get('/api/orderInquiry', { userId: this.userId });
+        const response = await get('/api/orderInquiry', { userId: util.getCookie('userid') });
         this.tableData = response.data;
         localStorage.setItem('jx3', JSON.stringify(response.data));
         return response.data;
