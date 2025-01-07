@@ -1,61 +1,63 @@
 <template>
-  <div class="login">
+  <div class="bgbox">
     <horizontalAnnouncement></horizontalAnnouncement>
-    <a @click="goNotice" style="margin-top: 8%;">公告</a>
-    <div class="login-form">
-      <!-- 注册 -->
-      <el-form :rules="rules" ref="rigForm" v-show="data.teileRigShow" :model="form" label-width="auto"
-        style="min-width: 300px;padding-top: 2rem;" label-position="left">
-        <el-form-item prop="loginAccount" label="账号">
-          <el-input name="loginAccount" placeholder="请输入账号" v-model="form.loginAccount" />
-        </el-form-item>
-        <el-form-item prop="password" label="密码">
-          <el-input name="password" placeholder="请输入密码" v-model="form.password" type="password" />
-        </el-form-item>
-        <el-form-item prop="email" label="邮箱">
-          <el-input name="email" placeholder="请输入邮箱" v-model="form.email" />
-        </el-form-item>
-        <el-form-item label="">
-          <div style="display: flex;justify-content: space-between;width: 100%;">
-            <a @click="switchToLogin">登录</a>
-            <a @click="switchToForget">忘记密码</a>
-          </div>
-        </el-form-item>
-      </el-form>
-      <!-- 登录 -->
-      <el-form :rules="rules" ref="lgionForm" v-show="data.teileLogShow" :model="form" label-width="auto"
-        style="min-width: 300px;padding-top: 2rem;" label-position="left">
-        <el-form-item prop="loginAccount" label="账号">
-          <el-input name="loginAccount" placeholder="请输入账号" v-model="form.loginAccount" />
-        </el-form-item>
-        <el-form-item prop="password" label="密码">
-          <el-input name="password" placeholder="请输入密码" v-model="form.password" type="password" />
-        </el-form-item>
-        <el-form-item label="">
-          <div style="display: flex;justify-content: space-between;width: 100%;">
-            <a @click="switchToRegister">注册</a>
-            <a @click="switchToForget">忘记密码</a>
-          </div>
-        </el-form-item>
-      </el-form>
-      <!-- 找回密码 -->
-      <el-form :rules="rules" ref="zhForm" v-show="data.teileForgetShow" :model="form" label-width="auto"
-        style="min-width: 300px;padding-top: 2rem;" label-position="left">
-        <el-form-item prop="email" label="邮箱">
-          <el-input name="email" placeholder="请输入邮箱" v-model="form.email" />
-        </el-form-item>
-        <el-form-item label="">
-          <div style="display: flex;justify-content: space-between;width: 100%;">
-            <a @click="switchToRegister">注册</a>
-            <a @click="switchToLogin">登录</a>
-          </div>
-        </el-form-item>
-      </el-form>
-      <div class="text-center">
-        <el-button v-show="data.teileRigShow" type="primary" @click="onSubmit('register')">注册</el-button>
-        <el-button v-show="data.teileLogShow" type="primary" @click="onSubmit('login')">登录</el-button>
-        <el-button v-show="data.teileForgetShow" type="primary" @click="onSubmit('forget')">找回密码</el-button>
+    <div class="login">
+      <div class="login-form">
+        <!-- 注册 -->
+        <el-form :rules="rules" ref="rigForm" v-show="data.teileRigShow" :model="form" label-width="auto"
+          style="min-width: 300px;padding-top: 2rem;" label-position="left">
+          <el-form-item prop="loginAccount" label="账号">
+            <el-input name="loginAccount" placeholder="请输入账号" v-model="form.loginAccount" />
+          </el-form-item>
+          <el-form-item prop="password" label="密码">
+            <el-input name="password" placeholder="请输入密码" v-model="form.password" type="password" />
+          </el-form-item>
+          <el-form-item prop="email" label="邮箱">
+            <el-input name="email" placeholder="请输入邮箱" v-model="form.email" />
+          </el-form-item>
+          <el-form-item label="">
+            <div style="display: flex;justify-content: space-between;width: 100%;">
+              <a @click="switchToLogin">登录</a>
+              <a @click="switchToForget">忘记密码</a>
+            </div>
+          </el-form-item>
+        </el-form>
+        <!-- 登录 -->
+        <el-form :rules="rules" ref="lgionForm" v-show="data.teileLogShow" :model="form" label-width="auto"
+          style="min-width: 300px;padding-top: 2rem;" label-position="left">
+          <el-form-item prop="loginAccount" label="账号">
+            <el-input name="loginAccount" placeholder="请输入账号" v-model="form.loginAccount" />
+          </el-form-item>
+          <el-form-item prop="password" label="密码">
+            <el-input name="password" placeholder="请输入密码" v-model="form.password" type="password" />
+          </el-form-item>
+          <el-form-item label="">
+            <div style="display: flex;justify-content: space-between;width: 100%;">
+              <a @click="switchToRegister">注册</a>
+              <a @click="switchToForget">忘记密码</a>
+            </div>
+          </el-form-item>
+        </el-form>
+        <!-- 找回密码 -->
+        <el-form :rules="rules" ref="zhForm" v-show="data.teileForgetShow" :model="form" label-width="auto"
+          style="min-width: 300px;padding-top: 2rem;" label-position="left">
+          <el-form-item prop="email" label="邮箱">
+            <el-input name="email" placeholder="请输入邮箱" v-model="form.email" />
+          </el-form-item>
+          <el-form-item label="">
+            <div style="display: flex;justify-content: space-between;width: 100%;">
+              <a @click="switchToRegister">注册</a>
+              <a @click="switchToLogin">登录</a>
+            </div>
+          </el-form-item>
+        </el-form>
+        <div class="text-center">
+          <el-button v-show="data.teileRigShow" type="primary" @click="onSubmit('register')">注册</el-button>
+          <el-button v-show="data.teileLogShow" type="primary" @click="onSubmit('login')">登录</el-button>
+          <el-button v-show="data.teileForgetShow" type="primary" @click="onSubmit('forget')">找回密码</el-button>
+        </div>
       </div>
+      <a @click="goNotice" style="margin-top: 2%;">悄悄话～</a>
     </div>
   </div>
 </template>
@@ -199,10 +201,20 @@ const onSubmit =  async (type) => {
 </script>
 
 <style scoped lang='less'>
-.login {
-  background-image: url('@/assets//png/124644672_p0.png');
+.bgbox{
+  background-image: url('@/assets/bgimage/图14.jpg');
   background-repeat: repeat;
   background-size: cover;
+  height: 100vh;
+}
+.login {
+  position: absolute;
+  top: 25%;
+  left: 10%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
 }
 
 .login-form {
@@ -210,7 +222,7 @@ const onSubmit =  async (type) => {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  margin-top: 2%;
+  justify-content: center;
   width: 25rem;
   box-shadow: rgba(0, 0, 0, 0.07) 0px 1px 2px, rgba(0, 0, 0, 0.07) 0px 2px 4px, rgba(0, 0, 0, 0.07) 0px 4px 8px, rgba(0, 0, 0, 0.07) 0px 8px 16px, rgba(0, 0, 0, 0.07) 0px 16px 32px, rgba(0, 0, 0, 0.07) 0px 32px 64px;
   background: rgba(255, 255, 255, 0.5);
