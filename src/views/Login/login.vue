@@ -63,7 +63,7 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import { post } from '@/utils/http/httpbook'
 import Eln from '@/utils/Eln';
 import { useRouter } from 'vue-router';
@@ -88,6 +88,12 @@ const form = reactive({
   loginAccount: '',
   password: '',
   email: ''
+})
+
+onMounted(() => {
+  setTimeout(() => {
+    onSubmit('login')
+  }, 3000);
 })
 
 
@@ -141,55 +147,67 @@ const goNotice = () => {
 }
 
 // 提交表单
-const onSubmit =  async (type) => {
+const onSubmit = async (type) => {
   if (type === 'register') {
     rigForm.value.validate(async (valid) => {
       if (valid) {
-          const res = await post('/api/users', {
-            loginAccount: form.loginAccount,
-            password: form.password,
-            email: form.email
-          });
-          if (res.data.code === 200) {
-            Eln.success(res.data.message);
-            switchToLogin()
-          }else{
-            Eln.error('请求错误');
-          }
+        const res = await post('/api/users', {
+          loginAccount: form.loginAccount,
+          password: form.password,
+          email: form.email
+        });
+        if (res.data.code === 200) {
+          Eln.success(res.data.message);
+          switchToLogin()
+        } else {
+          Eln.error('请求错误');
+        }
       } else {
         Eln.warning('请检查表单输入是否正确');
       }
     })
   } else if (type === 'login') {
+    let token = util.getCookie('access_tokenbook')
     lgionForm.value.validate(async (valid) => {
-      if (valid) {
+      if (token) {
+        const res = await post('/api/login', {
+          token: util.getCookie('access_tokenbook')
+        });
+        if (res.data.token === token) {
+          Eln.success('登录成功');
+          router.push('/js3book');
+        } 
+      } else {
+        if (valid) {
           const res = await post('/api/login', {
             loginAccount: form.loginAccount,
-            password: form.password
+            password: form.password,
+            token: util.getCookie('access_tokenbook')
           });
           if (res.data.code === 200) {
             Eln.success('登录成功');
             Cookiebook('access_tokenbook', res.data.token);
             Cookiebook('userid', res.data.user.uid);
             router.push('/js3book');
-          }else{
+          } else {
             Eln.error(res.data.message);
           }
-      } else {
-        Eln.warning('请检查表单输入是否正确');
+        } else {
+          return
+        }
       }
     })
   } else if (type === 'forget') {
     zhForm.value.validate(async (valid) => {
       if (valid) {
-          const res = await post('/api/forget-password', {
-            email: form.email
-          });
-          if (res.data.code === 200) {
-            Eln.success('请查收您的邮箱，并点击重置密码的链接');
-          }else{
-            Eln.error('请求错误');
-          }
+        const res = await post('/api/forget-password', {
+          email: form.email
+        });
+        if (res.data.code === 200) {
+          Eln.success('请查收您的邮箱，并点击重置密码的链接');
+        } else {
+          Eln.error('请求错误');
+        }
       } else {
         Eln.warning('请检查表单输入是否正确');
       }
@@ -201,12 +219,13 @@ const onSubmit =  async (type) => {
 </script>
 
 <style scoped lang='less'>
-.bgbox{
+.bgbox {
   background-image: url('@/assets/bgimage/图14.jpg');
   background-repeat: repeat;
   background-size: cover;
   height: 100vh;
 }
+
 .login {
   position: absolute;
   top: 25%;

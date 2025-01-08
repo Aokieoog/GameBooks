@@ -32,7 +32,7 @@ requestbook.interceptors.request.use(
           position: 'bottom-right',
         })
       setTimeout(() => {
-        router.push('/login');
+        router.push('/');
       }, 2000);
     }
     // if (token) {

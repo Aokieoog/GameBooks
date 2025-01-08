@@ -53,7 +53,7 @@ const closeAnnouncement = () => {
 .announcement-item {
   margin-right: 30px; /* 公告之间的间距 */
   font-size: 12px; /* 字体大小 */
-  color: red; /* 字体颜色 */
+  color: #535455; /* 字体颜色 */
   text-align: center;
 }
 
