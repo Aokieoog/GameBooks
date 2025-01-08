@@ -160,10 +160,10 @@ const onSubmit = async (type) => {
           Eln.success(res.data.message);
           switchToLogin()
         } else {
-          Eln.error('请求错误');
+          Eln.error(res.data.message);
         }
       } else {
-        Eln.warning('请检查表单输入是否正确');
+        Eln.warning(res.data.message);
       }
     })
   } else if (type === 'login') {
@@ -182,7 +182,6 @@ const onSubmit = async (type) => {
           const res = await post('/api/login', {
             loginAccount: form.loginAccount,
             password: form.password,
-            token: util.getCookie('access_tokenbook')
           });
           if (res.data.code === 200) {
             Eln.success('登录成功');
@@ -206,7 +205,7 @@ const onSubmit = async (type) => {
         if (res.data.code === 200) {
           Eln.success('请查收您的邮箱，并点击重置密码的链接');
         } else {
-          Eln.error('请求错误');
+          Eln.error(res.data.message);
         }
       } else {
         Eln.warning('请检查表单输入是否正确');
