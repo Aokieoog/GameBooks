@@ -6,9 +6,6 @@
         <span class="highlight-red">PS：</span>如果在双梦遇到一个叫‘
         <span class="highlight-red">咩气气</span>’的纯阳，请给她一串糖葫芦。😊
       </p>
-      <!-- <p class="announcement-intro">
-        <span class="highlight-blue">下个计划：</span>适配手机端（因博主一个人做时间有限，更新时间待定，先计划着。）😭
-      </p> -->
     </div>
 
     <div class="announcement-timeline">
@@ -33,6 +30,7 @@
 import { ref } from 'vue';
 
 const announcements = ref([
+  { date: '2025年1月8日', content: '优化UI中', isDeleted: false },
   { date: '2024年12月26日', content: '升级中', isDeleted: false },
   { date: '2024年12月21日', content: '数据云端储存，移除本地储存逻辑。<br>优化登录页面，公告页面 UI 更改。<br>重做交易行新增订单逻辑。', isDeleted: false },
   { date: '2024年11月13日', content: '修复了外观添加失败问题', isDeleted: false },

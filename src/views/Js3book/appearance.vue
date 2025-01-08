@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!-- <el-affix :offset="45"> -->
     <div class="navbar">
       <div>
         <el-select v-model="optionvalue" style="width: 6.875rem;">
@@ -37,18 +36,19 @@
         <el-dialog v-model="dialogVisible" :title="zhuceshow ? '注册账号' : passshow ? '登录账号' : '找回密码'" width="500" center>
           <el-form :model="form" label-width="6.25rem" style="max-width: 25rem">
             <el-form-item v-show="zhuceshow" label="用户名:">
-              <el-input name="user_name" type="text" v-model="form.user_name"></el-input>
+              <el-input name="user_name" placeholder="请输入废牛用户名" type="text" v-model="form.user_name"></el-input>
             </el-form-item>
             <el-form-item label="注册邮箱:">
-              <el-input name="mail" type="emil" v-model="form.mail" />
+              <el-input name="mail" placeholder="请输入废牛邮箱" type="emil" v-model="form.mail" />
             </el-form-item>
             <el-form-item v-show="zhuceshow" label="QQ:">
               <el-input name="qq" type="text" v-model="form.qq" />
             </el-form-item>
             <el-form-item v-show="passshow" label="登录密码:">
-              <el-input name="password" type="password" v-model="form.password" />
+              <el-input name="password" placeholder="请输入废牛密码" type="password" v-model="form.password" />
             </el-form-item>
           </el-form>
+          <p style="text-align: center;">注意：本服务调用废牛Api，请使用废牛记账本进行登录。</p>
           <div style="display:flex;justify-content:space-around;">
             <a v-show="!zhuceshow" @click="ZhuceBtn">注册</a>
             <a v-show="zhuceshow || !passshow" @click="logBtn">登录</a>
