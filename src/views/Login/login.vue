@@ -189,7 +189,7 @@ const onSubmit = async (type) => {
             Cookiebook('userid', res.data.user.uid);
             router.push('/js3book');
           } else {
-            Eln.error(res.data.message);
+            Eln.error('账号或密码错误');
           }
         } else {
           return

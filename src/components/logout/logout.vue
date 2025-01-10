@@ -41,9 +41,9 @@ onBeforeUnmount(() => {
 
 const logout = () => {
   Eln.success("退出成功");
+  util.removeCookie("access_tokenbook");
+  util.removeCookie("userid");
   setTimeout(() => {
-    util.removeCookie("access_tokenbook");
-    util.removeCookie("userid");
     router.push('/');
   }, 1000);
 };
