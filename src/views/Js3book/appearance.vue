@@ -639,7 +639,7 @@ const handleMouseEnter = (row, column) => {
 }
 
 onMounted(async () => {
-  let token = util.getCookie('token')
+  let token = util.getCookie('access_token')
   if (token) {
     await Mystocks() // 确保 Mystocks 是定义的
   }
