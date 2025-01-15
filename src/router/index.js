@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory,createWebHashHistory } from 'vue-router'
+import util from '@/utils/util.js'
 const routes = [
   {
     path: '/',
@@ -57,36 +58,22 @@ const router = createRouter({
   history: createWebHashHistory(),
   routes: routes
 })
-router.beforeEach((to) => {
-  // 根据路由的 meta 设置页面标题
+
+router.beforeEach((to,from,next) => {
+  let token = util.getCookie('access_tokenbook');
   if (to.meta.title) {
     document.title = to.meta.title;
   }
+  const publicPages = ['/'];
+  const authRequired = !publicPages.includes(to.path);
+
+  if (authRequired && !token) {
+    next({
+      path: '/',
+      query: { redirect: to.fullPath }
+    });
+  } else {
+    next();
+  }
 });
-
-// 请求接口获取动态路由配置
-// async function getRoutesFromApi() {
-//   const response = await axios.get('/api/routes')
-//   return response.data
-// }
-
-// 初始化应用时动态添加路由
-// async function initApp() {
-//   const dynamicRoutes = await getRoutesFromApi()
-//   dynamicRoutes.forEach(route => {
-//     router.addRoute(route)
-//   })
-// }
-
-// initApp()
-
-// router.beforeEach((to, from, next) => {
-//   let token = util.getCookie('access_token')
-//   document.title = to.meta.title
-//   if (!token && to.meta.fullPageDisplay == false) {
-//     next({ path: '/' })
-//   } else {
-//     next()
-//   }
-// })
 export default router

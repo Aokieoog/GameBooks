@@ -325,9 +325,9 @@ const passshow = ref(true) // 登录项
 const zhuceshow = ref(false) // 注册项
 const form = reactive({
   user_name: '',
-  mail: '',
   qq: '',
-  password: '',
+  mail: localStorage.getItem('mail') || '',
+  password: localStorage.getItem('password') || ''
 })
 const optionvalue = ref('0')
 const options = ref([
@@ -384,9 +384,11 @@ async function Zhuceq () {
 }
 // 登录
 async function Login () {
+  localStorage.setItem('username', form.mail);
+  localStorage.setItem('password', form.password);
   let data = {
     username: form.mail,
-    password: form.password
+    password: form.password,
   }
   let restoken = await post('/user/token', data, {
     headers: {
