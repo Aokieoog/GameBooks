@@ -11,7 +11,7 @@ This template should help get you started developing with Vue 3 in Vite. The tem
 - 组件命名 小驼峰 父文件夹 小驼峰
 - 页面命名 小驼峰 父文件夹 大驼峰
 
-### 引入OpenAI😔
+### 引入OpenAI😔-分支已废弃
 
 - npm install openai
 
