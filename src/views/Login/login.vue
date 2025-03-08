@@ -148,7 +148,7 @@ const goNotice = () => {
 
 // 提交表单
 const onSubmit = async (type) => {
-  if (type === 'register') {
+  if (type === 'register') { // 注册
     rigForm.value.validate(async (valid) => {
       if (valid) {
         const res = await post('/api/users', {
@@ -166,7 +166,7 @@ const onSubmit = async (type) => {
         Eln.warning(res.data.message);
       }
     })
-  } else if (type === 'login') {
+  } else if (type === 'login') { // 登录
     let token = util.getCookie('access_tokenbook')
     lgionForm.value.validate(async (valid) => {
       if (token) {
@@ -196,7 +196,7 @@ const onSubmit = async (type) => {
         }
       }
     })
-  } else if (type === 'forget') {
+  } else if (type === 'forget') { // 找回密码
     zhForm.value.validate(async (valid) => {
       if (valid) {
         const res = await post('/api/forget-password', {
