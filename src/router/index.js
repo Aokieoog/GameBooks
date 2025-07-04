@@ -64,7 +64,7 @@ router.beforeEach((to,from,next) => {
   if (to.meta.title) {
     document.title = to.meta.title;
   }
-  const publicPages = ['/'];
+  const publicPages = ['/','/jx3home'];
   const authRequired = !publicPages.includes(to.path);
 
   if (authRequired && !token) {

@@ -2,70 +2,79 @@
   <div class="bgbox">
     <horizontalAnnouncement></horizontalAnnouncement>
     <div class="login">
-      <div class="login-form">
-        <!-- 注册 -->
-        <el-form :rules="rules" ref="rigForm" v-show="data.teileRigShow" :model="form" label-width="auto"
-          style="min-width: 300px;padding-top: 2rem;" label-position="left">
-          <el-form-item prop="loginAccount" label="账号">
-            <el-input name="loginAccount" placeholder="请输入账号" v-model="form.loginAccount" />
-          </el-form-item>
-          <el-form-item prop="password" label="密码">
-            <el-input name="password" placeholder="请输入密码" v-model="form.password" type="password" />
-          </el-form-item>
-          <el-form-item prop="email" label="邮箱">
-            <el-input name="email" placeholder="请输入邮箱" v-model="form.email" />
-          </el-form-item>
-          <el-form-item label="">
-            <div style="display: flex;justify-content: space-between;width: 100%;">
-              <a @click="switchToLogin">登录</a>
-              <a @click="switchToForget">忘记密码</a>
-            </div>
-          </el-form-item>
-        </el-form>
-        <!-- 登录 -->
-        <el-form :rules="rules" ref="lgionForm" v-show="data.teileLogShow" :model="form" label-width="auto"
-          style="min-width: 300px;padding-top: 2rem;" label-position="left">
-          <el-form-item prop="loginAccount" label="账号">
-            <el-input name="loginAccount" placeholder="请输入账号" v-model="form.loginAccount" />
-          </el-form-item>
-          <el-form-item prop="password" label="密码">
-            <el-input name="password" placeholder="请输入密码" v-model="form.password" type="password" />
-          </el-form-item>
-          <el-form-item label="">
-            <div style="display: flex;justify-content: space-between;width: 100%;">
-              <a @click="switchToRegister">注册</a>
-              <a @click="switchToForget">忘记密码</a>
-            </div>
-          </el-form-item>
-        </el-form>
-        <!-- 找回密码 -->
-        <el-form :rules="rules" ref="zhForm" v-show="data.teileForgetShow" :model="form" label-width="auto"
-          style="min-width: 300px;padding-top: 2rem;" label-position="left">
-          <el-form-item prop="email" label="邮箱">
-            <el-input name="email" placeholder="请输入邮箱" v-model="form.email" />
-          </el-form-item>
-          <el-form-item label="">
-            <div style="display: flex;justify-content: space-between;width: 100%;">
-              <a @click="switchToRegister">注册</a>
-              <a @click="switchToLogin">登录</a>
-            </div>
-          </el-form-item>
-        </el-form>
-        <div class="text-center">
-          <el-button v-show="data.teileRigShow" type="primary" @click="onSubmit('register')">注册</el-button>
-          <el-button v-show="data.teileLogShow" type="primary" @click="onSubmit('login')">登录</el-button>
-          <el-button v-show="data.teileForgetShow" type="primary" @click="onSubmit('forget')">找回密码</el-button>
+      <a @click="goNotice" style="margin-bottom: 2%;">公告</a>
+      <Transition name="fade" mode="out-in">
+        <div class="login-form" :key="currentKey">
+          <!-- 注册 -->
+          <!-- <Transition> -->
+          <el-form :rules="rules" ref="rigForm" v-show="data.teileRigShow" :model="form" label-width="auto"
+            style="min-width: 300px;padding-top: 2rem;" label-position="left">
+            <el-form-item prop="loginAccount" label="账号">
+              <el-input name="loginAccount" placeholder="请输入账号" v-model="form.loginAccount" />
+            </el-form-item>
+            <el-form-item prop="password" label="密码">
+              <el-input name="password" placeholder="请输入密码" v-model="form.password" type="password" />
+            </el-form-item>
+            <el-form-item prop="email" label="邮箱">
+              <el-input name="email" placeholder="请输入邮箱" v-model="form.email" />
+            </el-form-item>
+            <el-form-item label="">
+              <div style="display: flex;justify-content: space-between;width: 100%;">
+                <a @click="switchToLogin">登录</a>
+                <a @click="switchToForget">忘记密码</a>
+              </div>
+            </el-form-item>
+          </el-form>
+          <!-- </Transition> -->
+          <!-- 登录 -->
+          <!-- <Transition> -->
+          <el-form :rules="rules" ref="lgionForm" v-show="data.teileLogShow" :model="form" label-width="auto"
+            style="min-width: 300px;padding-top: 2rem;" label-position="left">
+            <el-form-item prop="loginAccount" label="账号">
+              <el-input name="loginAccount" placeholder="请输入账号" v-model="form.loginAccount" />
+            </el-form-item>
+            <el-form-item prop="password" label="密码">
+              <el-input name="password" placeholder="请输入密码" v-model="form.password" type="password" />
+            </el-form-item>
+            <el-form-item label="">
+              <div style="display: flex;justify-content: space-between;width: 100%;">
+                <a @click="switchToRegister">注册</a>
+                <a @click="switchToForget">忘记密码</a>
+              </div>
+            </el-form-item>
+          </el-form>
+          <!-- </Transition> -->
+          <!-- 找回密码 -->
+          <!-- <Transition> -->
+          <el-form :rules="rules" ref="zhForm" v-show="data.teileForgetShow" :model="form" label-width="auto"
+            style="min-width: 300px;padding-top: 2rem;" label-position="left">
+            <el-form-item prop="email" label="邮箱">
+              <el-input name="email" placeholder="请输入邮箱" v-model="form.email" />
+            </el-form-item>
+            <el-form-item label="">
+              <div style="display: flex;justify-content: space-between;width: 100%;">
+                <a @click="switchToRegister">注册</a>
+                <a @click="switchToLogin">登录</a>
+              </div>
+            </el-form-item>
+          </el-form>
+          <!-- </Transition> -->
+          <div class="text-center">
+            <el-button v-show="data.teileRigShow" type="primary" @click="onSubmit('register')">注册</el-button>
+            <el-button v-show="data.teileLogShow" type="primary" @click="onSubmit('login')">登录</el-button>
+            <el-button v-show="data.teileForgetShow" type="primary" @click="onSubmit('forget')">找回密码</el-button>
+          </div>
         </div>
-      </div>
-      <a @click="goNotice" style="margin-top: 2%;">悄悄话～</a>
+      </Transition>
+      
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue';
-import { post } from '@/utils/http/httpbook'
-import Eln from '@/utils/Eln';
+import { ref, reactive, onMounted, computed } from 'vue';
+import { post } from '@/utils/http/httpbook';
+import { ElMessage } from 'element-plus';
 import { useRouter } from 'vue-router';
 import { Cookiebook } from '@/utils/cookie.js';
 import horizontalAnnouncement from "@/components/horizontalAnnouncement/horizontalAnnouncement.vue";
@@ -96,6 +105,11 @@ onMounted(() => {
   }, 3000);
 })
 
+const currentKey = computed(() => {
+  if (data.teileRigShow) return 'register'
+  if (data.teileLogShow) return 'login'
+  return 'forget'
+})
 
 
 // 定义校验规则
@@ -150,20 +164,21 @@ const goNotice = () => {
 const onSubmit = async (type) => {
   if (type === 'register') { // 注册
     rigForm.value.validate(async (valid) => {
-      if (valid) {
+      if (!valid) return;
+      try {
         const res = await post('/api/users', {
           loginAccount: form.loginAccount,
           password: form.password,
           email: form.email
         });
         if (res.data.code === 200) {
-          Eln.success(res.data.message);
+          ElMessage.success(res.data.message);
           switchToLogin()
         } else {
-          Eln.error(res.data.message);
+          ElMessage.error(res.data.message);
         }
-      } else {
-        Eln.warning(res.data.message);
+      } catch (error) {
+        ElMessage.error(error.message);
       }
     })
   } else if (type === 'login') { // 登录
@@ -174,41 +189,44 @@ const onSubmit = async (type) => {
           token: util.getCookie('access_tokenbook')
         });
         if (res.data.token === token) {
-          Eln.success('登录成功');
+          ElMessage.success('登录成功');
           router.push('/js3book');
-        } 
+        }
       } else {
-        if (valid) {
+        if (!valid) return;
+        try {
           const res = await post('/api/login', {
             loginAccount: form.loginAccount,
             password: form.password,
           });
-          if (res.data.code === 200) {
-            Eln.success('登录成功');
+          if (res.data?.code === 200) {
+            ElMessage.success('登录成功');
             Cookiebook('access_tokenbook', res.data.token);
             Cookiebook('userid', res.data.user.uid);
             router.push('/js3book');
           } else {
-            Eln.error('账号或密码错误');
+            ElMessage.error(res.data?.message || '账号或密码错误');
           }
-        } else {
-          return
+        } catch (err) {
+          ElMessage.error('请求失败，请检查网络或稍后再试');
+          console.error('登录接口错误', err);
         }
       }
     })
   } else if (type === 'forget') { // 找回密码
     zhForm.value.validate(async (valid) => {
-      if (valid) {
+      if (!valid) return;
+      try {
         const res = await post('/api/forget-password', {
           email: form.email
         });
         if (res.data.code === 200) {
-          Eln.success('请查收您的邮箱，并点击重置密码的链接');
+          ElMessage.success('请查收您的邮箱，并点击重置密码的链接');
         } else {
-          Eln.error(res.data.message);
+          ElMessage.error(res.data.message);
         }
-      } else {
-        Eln.warning('请检查表单输入是否正确');
+      } catch (err) {
+        ElMessage.warning('请检查表单输入是否正确');
       }
     })
   }
@@ -251,5 +269,22 @@ const onSubmit = async (type) => {
 .text-center button {
   width: 10rem;
   margin-bottom: 2rem;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity .3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  /* 开始进入 或 准备离开时透明 */
+}
+
+.fade-enter-to,
+.fade-leave-from {
+  opacity: 1;
+  /* 最终呈现 或 刚要开始离开时为不透明 */
 }
 </style>

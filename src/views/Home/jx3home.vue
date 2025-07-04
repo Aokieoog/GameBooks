@@ -20,7 +20,7 @@
 
     <!-- 糖葫芦图片 -->
     <div class="img-container">
-      <img src="@/assets/png/miemie.png" alt="糖葫芦" />
+      <!-- <img src="@/assets/png/miemie.png" alt="糖葫芦" /> -->
       <p>糖葫芦🍬😄</p>
     </div>
   </div>
