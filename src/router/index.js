@@ -9,7 +9,7 @@ const routes = [
       fullPageDisplay: true,
       title: '登录',
     },
-    component: () => import('@/views/Login/index.vue'),
+    component: () => import('@/views/game-login/index.vue'),
   },
   {
     path: '/jx3home',
@@ -18,7 +18,7 @@ const routes = [
       fullPageDisplay: true,
       title: '公告',
     },
-    component: () => import('@/views/Home/index.vue'),
+    component: () => import('@/views/game-home/index.vue'),
   },
   {
     path: '/js3book',
@@ -27,7 +27,7 @@ const routes = [
       fullPageDisplay: false,
       title: '剑网三交易行',
     },
-    component: () => import('@/views/Jx3Book/index.vue'),
+    component: () => import('@/views/game-jx3/index.vue'),
   },
   {
     path: '/appearance',
@@ -36,7 +36,7 @@ const routes = [
       fullPageDisplay: false,
       title: '剑网三外观',
     },
-    component: () => import('@/views/FeiNiuBook/index.vue'),
+    component: () => import('@/views/game-feiniubook/index.vue'),
   },
   // 正确的通配 404
   {

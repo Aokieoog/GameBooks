@@ -39,6 +39,10 @@
 
 <script setup>
 import util from '@/utils/util.js';
+import Search from './components/Search.vue';
+import PriceInput from './components/PriceInput.vue';
+import { ElMessage } from 'element-plus';
+import { Top, Bottom } from '@element-plus/icons-vue';
 import { ref } from 'vue';
 
 const variable = ref(null); // 示例变量

@@ -342,19 +342,7 @@ const mockSearchResults = [
   { name: '彩·五行石', iconID: '3450', _id: 'item_004' },
 ];
 
-// --- 🚀 修改 onMounted 注入假数据 ---
-
 onMounted(() => {
-  // 原来的逻辑: Jx3Store.orderInquiry()
-
-  // 修改为：直接注入假数据到 Store (或者直接赋值给 computed 所依赖的变量)
-  // 假设 storeToRefs 出来的 mockTableData 是可写的，或者我们直接修改 Store
-  // 如果不能直接修改 Store，你可以临时创建一个本地 ref 来展示效果
-
-  // 强制覆盖 Store 中的数据用于展示 (模拟 API 返回)
-  updateTableHeight();
-  window.addEventListener('resize', updateTableHeight);
-
   ElMessage.success('已加载演示数据'); // 提示一下
 });
 

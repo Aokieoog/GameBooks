@@ -183,7 +183,7 @@
 import { ref, reactive, watch } from 'vue';
 import { ElMessage } from 'element-plus';
 import { Message, Lock } from '@element-plus/icons-vue'; // 显式导入图标，防止未配置自动导入导致显示空白
-import supabase from '@/utils/SupaBase/supabase';
+import supabase from '@/utils/supabase/supabase';
 import router from '@/router';
 
 const currentModule = ref('login');
