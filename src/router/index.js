@@ -1,79 +1,91 @@
-import { createRouter, createWebHistory,createWebHashHistory } from 'vue-router'
-import util from '@/utils/util.js'
+import { createRouter, createWebHashHistory } from 'vue-router';
+import { useUserStore } from '@/pinia/useSupaBaseUser/index';
+
 const routes = [
   {
     path: '/',
     name: 'login',
     meta: {
       fullPageDisplay: true,
-      title: '登录'
+      title: '登录',
     },
-    component: () => import('@/views/Login/login.vue')
-  },
-  {
-    path: '/:pathMatch(.*)',
-    name: '404',
-    meta: {
-      fullPageDisplay: true, //需要全页展示的组件
-      title: '404'
-    },
-    component: () => import('@/views/404.vue')
+    component: () => import('@/views/Login/login.vue'),
   },
   {
     path: '/jx3home',
     name: 'jx3home',
     meta: {
       fullPageDisplay: true,
-      title: '公告'
+      title: '公告',
     },
-    component: () => import('@/views/Home/jx3home.vue')
+    component: () => import('@/views/Home/jx3home.vue'),
   },
   {
-    path: '/js3book',//剑三记账本
+    path: '/js3book',
     name: 'js3book',
     meta: {
-      fullPageDisplay: false, //不需要全页展示的组件
-      title: '剑网三交易行'
+      fullPageDisplay: false,
+      title: '剑网三交易行',
     },
-    component: () => import('@/views/Js3book/js3book.vue')
-  },{
+    component: () => import('@/views/Js3book/js3book.vue'),
+  },
+  {
     path: '/appearance',
     name: 'appearance',
     meta: {
       fullPageDisplay: false,
-      title: '剑网三外观'
+      title: '剑网三外观',
     },
-    component: () => import('@/views/Js3book/appearance.vue')
+    component: () => import('@/views/Js3book/appearance.vue'),
   },
+  // 正确的通配 404
   {
-    path: '/test',
-    name: 'test',
+    path: '/:pathMatch(.*)*',
+    name: '404',
     meta: {
-      fullPageDisplay: true
+      fullPageDisplay: true,
+      title: '404',
     },
-    component: () => import('@/dome/test.vue')
-  }
-]
+    component: () => import('@/views/404.vue'),
+  },
+];
+
 const router = createRouter({
   history: createWebHashHistory(),
-  routes: routes
-})
+  routes,
+});
 
-router.beforeEach((to,from,next) => {
-  let token = util.getCookie('access_tokenbook');
+// 🟣 路由守卫（推荐写法）
+router.beforeEach(async (to, from, next) => {
+  const userStore = useUserStore();
+
+  await userStore.init();
+
+  const user = userStore.user;
+
+  // 设置标题
   if (to.meta.title) {
     document.title = to.meta.title;
   }
-  const publicPages = ['/','/jx3home'];
+
+  // 不需要登录的路径
+  const publicPages = ['/', '/jx3home'];
+
   const authRequired = !publicPages.includes(to.path);
 
-  if (authRequired && !token) {
-    next({
-      path: '/',
-      query: { redirect: to.fullPath }
-    });
-  } else {
-    next();
+  // ✔ 已登录 → 尝试去登录页 → 自动跳回首页
+  if (user && to.path === '/') {
+    return next('/js3book');
   }
+  // ✔ 需要登录但是未登录 → 跳到登录
+  if (authRequired && !user) {
+    return next({
+      path: '/',
+      query: { redirect: to.fullPath },
+    });
+  }
+
+  next();
 });
-export default router
+
+export default router;

@@ -34,7 +34,3 @@ app.use(pinia)
 app.component('SvgIcon', SvgIcon)
 
 router.isReady().then(() => app.mount('#app'))
-
-/* 挂载VUE原型
- * vue3.0取消了Vue.prototype，官方文档推荐使用globalProperties
- */

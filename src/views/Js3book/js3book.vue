@@ -1,199 +1,301 @@
 <template>
-  <div>
-    <div class="navbar">
-      <span style="margin-right: 1.25rem;font-weight: 600;">物品名:</span>
-      <Search style="margin-right: 1rem;" @handleSelect="handleSelect" :fetch-cities="fetchCities"></Search>
-      <PriceInput @addForSale="handleAddForSale" />
-      <div class="profit-summary">
-        <span class="label" @click="profitShow=!profitShow">{{ profitShow?'总利润（税前）:':'总利润（税后）:' }}</span>
-        <span style="margin-right: 2rem;" :class="{ 'profit-positive': totalProfit > 0, 'profit-negative': totalProfit <= 0 }">
-          {{ profitShow?util.numPad(totalProfit):util.numPad(totalProfit*0.95) }}
-        </span>
+  <div class="main-container">
+    <div class="decoration-circle circle-1"></div>
+    <div class="decoration-circle circle-2"></div>
+
+    <div class="glass-content">
+      <div class="navbar-glass">
+        <div class="nav-left">
+          <div class="input-group">
+            <span class="label-text">物品名</span>
+            <Search
+              class="custom-search"
+              @handleSelect="handleSelect"
+              :fetch-cities="fetchCities"
+            ></Search>
+          </div>
+          <div class="input-group">
+            <PriceInput @addForSale="handleAddForSale" />
+          </div>
+        </div>
+
+        <div class="nav-right">
+          <div
+            class="profit-card"
+            :class="{ 'is-positive': totalProfit > 0 }"
+            @click="profitShow = !profitShow"
+          >
+            <div class="profit-label">
+              {{ profitShow ? '税前总利润' : '税后总利润' }}
+            </div>
+            <div class="profit-value">
+              <el-icon v-if="totalProfit > 0"><Top /></el-icon>
+              <el-icon v-else><Bottom /></el-icon>
+              {{
+                profitShow
+                  ? util.numPad(totalProfit)
+                  : util.numPad(totalProfit * 0.95)
+              }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <el-table
+          ref="table"
+          :data="sortedTableData"
+          :height="tableHeight"
+          style="width: 100%"
+          class="glass-table"
+          header-row-class-name="glass-header"
+          row-class-name="glass-row"
+          @row-click="sellTheGoods"
+        >
+          <el-table-column
+            prop="createdAt"
+            label="买入时间"
+            width="180"
+            sortable
+            show-overflow-tooltip
+          >
+            <template #default="scope">
+              <span class="time-text">{{
+                util.formatDate(scope.row.createdAt)
+              }}</span>
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            prop="name"
+            label="物品名称"
+            min-width="150"
+            sortable
+            show-overflow-tooltip
+          >
+            <template #default="scope">
+              <div class="item-cell">
+                <div class="icon-wrapper" v-if="scope.row.iconID">
+                  <img
+                    :src="`https://icon.jx3box.com/icon/${scope.row.iconID}.png`"
+                    alt="icon"
+                  />
+                </div>
+                <span class="item-name">{{ scope.row.name }}</span>
+              </div>
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            prop="totalValue"
+            label="买入单价"
+            sortable
+            min-width="120"
+          >
+            <template #default="scope">
+              <span class="price-text">{{
+                util.numPad(
+                  unitPrice(scope.row.jin, scope.row.yin, scope.row.tong),
+                )
+              }}</span>
+            </template>
+          </el-table-column>
+
+          <el-table-column prop="ress" label="数量" sortable width="100">
+            <template #default="scope">
+              <el-tag type="info" effect="plain" round>{{
+                scope.row.ress
+              }}</el-tag>
+            </template>
+          </el-table-column>
+
+          <el-table-column
+            prop="totalValue"
+            label="总成本"
+            sortable
+            min-width="120"
+          >
+            <template #default="scope">
+              <span class="cost-text">{{
+                util.numPad(scope.row.totalValue)
+              }}</span>
+            </template>
+          </el-table-column>
+
+          <el-table-column prop="stock" label="库存" sortable width="100">
+            <template #default="scope">
+              <span :class="scope.row.stock > 0 ? 'stock-high' : 'stock-low'">{{
+                scope.row.stock
+              }}</span>
+            </template>
+          </el-table-column>
+
+          <el-table-column label="预期利润" min-width="120">
+            <template #default="scope">
+              <span
+                class="profit-text"
+                :class="
+                  scope.row.orderTotalRevenue - scope.row.totalValue > 0
+                    ? 'text-gain'
+                    : 'text-loss'
+                "
+              >
+                {{
+                  scope.row.orderTotalRevenue - scope.row.totalValue > 0
+                    ? '+'
+                    : ''
+                }}
+                {{
+                  util.numPad(
+                    scope.row.orderTotalRevenue - scope.row.totalValue,
+                  )
+                }}
+              </span>
+            </template>
+          </el-table-column>
+
+          <el-table-column fixed="right" label="操作" width="160">
+            <template #default="scope">
+              <div class="action-buttons">
+                <sell-order
+                  :sellPriceprops="scope.row.orderId"
+                  :call="scope.row.ress"
+                ></sell-order>
+                <el-button
+                  class="delete-btn"
+                  @click.stop="visibleshow(scope.row.orderId)"
+                  link
+                  type="danger"
+                >
+                  <el-icon><Delete /></el-icon>
+                </el-button>
+              </div>
+            </template>
+          </el-table-column>
+        </el-table>
       </div>
     </div>
-    <div class="containerright">
-      <el-table ref="table" :data="sortedTableData" border @row-click="sellTheGoods" :height="tableHeight">
-        <el-table-column prop="createdAt" show-overflow-tooltip sortable label="买入时间">
-          <template #default="scope">
-            {{ util.formatDate(scope.row.createdAt) }}
-          </template>
-        </el-table-column>
-        <el-table-column prop="name" show-overflow-tooltip sortable label="名称">
-          <template #default="scope">
-            <div class="divicon-table">
-              <img class="icon-table" v-if="scope.row.iconID"
-                :src="`https://icon.jx3box.com/icon/` + scope.row.iconID + `.png`" alt="Icon" />
-              <span style="color: rgb(119 2 247);">{{ scope.row.name }}</span>
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column prop="totalValue" sortable label="买入单价">
-          <template #default="scope">
-            <span style="color: #f75e02;">{{ util.numPad(unitPrice(scope.row.jin, scope.row.yin, scope.row.tong)) }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="ress" sortable label="买入数量">
-          <template #default="scope">
-            <span style="color: rgb(123 141 64);">{{ scope.row.ress }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="totalValue" sortable label="成本">
-          <template #default="scope">
-            <span style="color: #f75e02;">{{ util.numPad(scope.row.totalValue) }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="stock" sortable label="剩余库存">
-          <template #default="scope">
-            <span style="color: rgb(123 141 64);">{{ scope.row.stock }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="利润">
-          <template #default="scope">
-            <span :style="{ color: (scope.row.orderTotalRevenue - scope.row.totalValue) > 0 ? '#f75e02' : '#67c23a' }">
-              {{ util.numPad(scope.row.orderTotalRevenue - scope.row.totalValue) }}
-            </span>
-          </template>
-        </el-table-column>
-        <el-table-column fixed="right" label="操作">
-          <template #default="scope">
-            <sell-order :sellPriceprops="scope.row.orderId" :call="scope.row.ress"></sell-order>
-            <el-button @click="visibleshow(scope.row.orderId)" link type="primary" size="small">
-              删除
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
   </div>
-  <el-dialog align-center v-model="visible" title="删除" width="300" draggable>
-    <span>确认删除？</span>
+
+  <el-dialog
+    v-model="visible"
+    title="确认操作"
+    width="320px"
+    align-center
+    class="glass-dialog"
+    :show-close="false"
+  >
+    <div class="dialog-content">
+      <el-icon class="warning-icon"><WarningFilled /></el-icon>
+      <p>
+        确定要删除这条订单记录吗？<br /><span class="sub-tip"
+          >此操作无法撤销。</span
+        >
+      </p>
+    </div>
     <template #footer>
       <div class="dialog-footer">
-        <el-button type="primary" @click="deleteOrder(visible)">
-          确认
-        </el-button>
+        <el-button @click="visible = false" text bg>取消</el-button>
+        <el-button type="danger" @click="deleteOrder(visible)" color="#f56c6c"
+          >确认删除</el-button
+        >
       </div>
     </template>
   </el-dialog>
 </template>
+
 <script setup>
-import { ref, reactive, onMounted, computed, onBeforeUnmount } from "vue";
-import { post, get, DELETE } from '@/utils/http/httpbook'
+import { ref, reactive, onMounted, computed, onBeforeUnmount } from 'vue';
 import { storeToRefs } from 'pinia';
-import { useJx3book } from "@/pinia/useJx3book/useJx3book";
+import { useJx3book } from '@/pinia/useJx3book/useJx3book';
 import Search from '@/components/search/Search.vue';
 import PriceInput from '@/components/PriceInput/PriceInput.vue';
-import util from '@/utils/util.js'
+import util from '@/utils/util.js';
 import SellOrder from '@/components/sellOrder/sellOrder.vue';
 import Eln from '@/utils/Eln';
+import { Top, Bottom, Delete, WarningFilled } from '@element-plus/icons-vue'; // 引入图标
 
-
-const Jx3Store = useJx3book()
+const Jx3Store = useJx3book();
 const { tableData } = storeToRefs(Jx3Store);
-const selectedCity = ref('')
-const profitShow = ref(false)
+const selectedCity = ref('');
+const profitShow = ref(false);
 
-const tableHeight = ref(0);
+const tableHeight = ref(500); // 初始值
 const visible = ref(false);
-const orderId = ref('')
-const totalSelling= ref(0)
-
+const orderId = ref('');
+const totalSelling = ref(0);
 
 onMounted(() => {
-  Jx3Store.orderInquiry()
-  // tableDatac.value = tableData
+  Jx3Store.orderInquiry();
   updateTableHeight();
   window.addEventListener('resize', updateTableHeight);
-})
+});
 
 onBeforeUnmount(() => {
   window.removeEventListener('resize', updateTableHeight);
 });
 
+// 调整高度计算逻辑，留出头部和padding的空间
 const updateTableHeight = () => {
   const windowHeight = window.innerHeight;
-  const padding = 150; // 根据实际情况调整表格的上、下边距
+  // padding = navbar height + margins + padding bottom
+  const padding = 140;
   tableHeight.value = windowHeight - padding;
 };
 
 //时间排序
 const sortedTableData = computed(() => {
-  return tableData.value.slice().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-})
-
+  return tableData.value
+    .slice()
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+});
 
 const handleSelect = (city) => {
   selectedCity.value = city;
 };
-// const totalSellingPrice = (price) => {
-//   totalSelling.value = price
-//   console.log('总价:', totalSelling.value);
-// }
-
 
 // 添加订单
-const handleAddForSale = util.throttle( async (sellPrice) => {
-  const userId = util.getCookie('userid')
+const handleAddForSale = util.throttle(async (sellPrice) => {
+  const userId = util.getCookie('userid');
   if (!selectedCity.value.itemId) {
-    return Eln.error('请选择物品')
+    return Eln.error('请选择物品');
   } else if (!sellPrice.jin && !sellPrice.yin && !sellPrice.tong) {
-    return Eln.error('请填写价格')
+    return Eln.error('请填写价格');
   }
   try {
     Object.assign(sellPrice, { itemId: selectedCity.value.itemId, userId });
     const response = await post('/api/orders', sellPrice);
     if (response.data.code === 200) {
-      Eln.success('添加成功')
-      Jx3Store.orderInquiry()
+      Eln.success('添加成功');
+      Jx3Store.orderInquiry();
     }
   } catch (error) {
     console.error('Error:', error);
   }
 }, 1000);
 
-
-
-
-// 搜索物品列表
-const fetchCities = async (query) => {
-  try {
-    const response = await get('/api/items', { name: query });
-    console.log('返回数据:', response.data);
-    return response.data.map(item => ({
-      name: item.name,
-      iconID: item.iconID,
-      itemId: item._id
-    }));
-  } catch (error) {
-    console.error('接口调用失败:', error);
-    return [];
-  }
-};
 // 删除订单
 const deleteOrder = async () => {
-
   try {
     const response = await DELETE('/api/delorders/', { id: orderId.value });
-    Jx3Store.orderInquiry()
-    Eln.success('删除成功')
-    visible.value = false
+    Jx3Store.orderInquiry();
+    Eln.success('删除成功');
+    visible.value = false;
     return response.data;
   } catch (error) {
-    Eln.error('删除失败')
+    Eln.error('删除失败');
     return [];
   }
 };
 
 const visibleshow = (id) => {
-  visible.value = true
-  orderId.value = id
-}
-
-
+  visible.value = true;
+  orderId.value = id;
+};
 
 // 计算总价
-function unitPrice (jin, yin, tong) {
-  return jin * 10000 + yin * 100 + tong
+function unitPrice(jin, yin, tong) {
+  return jin * 10000 + yin * 100 + tong;
 }
 
 // 添加总利润计算
@@ -203,180 +305,451 @@ const totalProfit = computed(() => {
     return sum + orderProfit;
   }, 0);
 });
+
+// ... 保留你原有的 import ...
+
+// --- 🛠️ 假数据生成工具 (Mock Data) ---
+
+// 1. 模拟表格数据
+const mockTableData = [
+  {
+    orderId: '1001',
+    createdAt: new Date().toISOString(), // 刚刚
+    name: '沉沙玄晶', // 大铁，贵重物品
+    iconID: '2461', // 真实的玄晶图标ID
+    jin: 200,
+    yin: 0,
+    tong: 0, // 200砖
+    totalValue: 2000000, // 成本: 200砖
+    ress: 1,
+    stock: 0, // 已售罄
+    orderTotalRevenue: 2200000, // 卖了220砖 (赚了)
+  },
+  {
+    orderId: '1002',
+    createdAt: new Date(Date.now() - 3600 * 1000 * 2).toISOString(), // 2小时前
+    name: '五行石（六级）',
+    iconID: '3448',
+    jin: 0,
+    yin: 750,
+    tong: 0, // 750金
+    totalValue: 75000,
+    ress: 100,
+    stock: 24, // 还有库存
+    orderTotalRevenue: 8000000, // 总收入 (假设卖了一部分)
+  },
+  {
+    orderId: '1003',
+    createdAt: new Date(Date.now() - 3600 * 1000 * 24).toISOString(), // 1天前
+    name: '赤兔·飞虹',
+    iconID: '6866',
+    jin: 50,
+    yin: 0,
+    tong: 0,
+    totalValue: 500000,
+    ress: 1,
+    stock: 1,
+    orderTotalRevenue: 450000, // 只有45砖 (亏损示例)
+  },
+  {
+    orderId: '1004',
+    createdAt: new Date(Date.now() - 3600 * 1000 * 48).toISOString(), // 2天前
+    name: '甘草',
+    iconID: '414',
+    jin: 0,
+    yin: 5,
+    tong: 0,
+    totalValue: 500,
+    ress: 2000, // 大量材料
+    stock: 2000,
+    orderTotalRevenue: 0, // 还没卖出
+  },
+  {
+    orderId: '1005',
+    createdAt: new Date(Date.now() - 3600 * 1000 * 50).toISOString(),
+    name: '天韶绣·衣', // 外观
+    iconID: '10643',
+    jin: 20,
+    yin: 50,
+    tong: 0,
+    totalValue: 205000,
+    ress: 1,
+    stock: 0,
+    orderTotalRevenue: 250000, // 小赚
+  },
+  {
+    orderId: '1006',
+    createdAt: new Date(Date.now() - 3600 * 1000 * 120).toISOString(),
+    name: '化极魔简',
+    iconID: '1622',
+    jin: 1,
+    yin: 20,
+    tong: 0,
+    totalValue: 12000,
+    ress: 50,
+    stock: 10,
+    orderTotalRevenue: 700000,
+  },
+];
+
+// 2. 模拟搜索下拉结果
+const mockSearchResults = [
+  { name: '五行石（六级）', iconID: '3448', _id: 'item_001' },
+  { name: '五行石（五级）', iconID: '3447', _id: 'item_002' },
+  { name: '五行石（四级）', iconID: '3446', _id: 'item_003' },
+  { name: '彩·五行石', iconID: '3450', _id: 'item_004' },
+];
+
+// --- 🚀 修改 onMounted 注入假数据 ---
+
+onMounted(() => {
+  // 原来的逻辑: Jx3Store.orderInquiry()
+
+  // 修改为：直接注入假数据到 Store (或者直接赋值给 computed 所依赖的变量)
+  // 假设 storeToRefs 出来的 tableData 是可写的，或者我们直接修改 Store
+  // 如果不能直接修改 Store，你可以临时创建一个本地 ref 来展示效果
+
+  // 强制覆盖 Store 中的数据用于展示 (模拟 API 返回)
+  tableData.value = mockTableData;
+
+  updateTableHeight();
+  window.addEventListener('resize', updateTableHeight);
+
+  Eln.success('已加载演示数据'); // 提示一下
+});
+
+// --- 🔍 修改搜索函数 fetchCities 使用假数据 ---
+
+const fetchCities = async (query) => {
+  // 模拟网络延迟
+  await new Promise((resolve) => setTimeout(resolve, 500));
+
+  // 简单的模糊匹配
+  if (!query) return [];
+  const results = mockSearchResults.filter(
+    (item) => item.name.includes(query) || '五行石'.includes(query),
+  ); // 为了演示，默认返回一些
+
+  return results.map((item) => ({
+    name: item.name,
+    iconID: item.iconID,
+    itemId: item._id,
+  }));
+};
+
+// ⚠️ 注意：原来的 addForSale 和 deleteOrder 会因为没有真实后端报错
+// 建议把它们也改成打印 console.log 即可，例如：
+/*
+const deleteOrder = async () => {
+   visible.value = false;
+   // 模拟前端删除
+   const index = tableData.value.findIndex(item => item.orderId === orderId.value);
+   if (index !== -1) tableData.value.splice(index, 1);
+   Eln.success('模拟删除成功');
+};
+*/
 </script>
 
-<style scoped lang="less">
-.itemimage {
-  display: flex;
-  align-items: center;
-  width: 15rem;
-  border-radius: 0.2rem;
+<style scoped lang="scss">
+/* --- 全局布局与背景 --- */
+.main-container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  background-color: #e0e5ec;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  overflow: hidden;
+  font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
 }
 
-.itemimage:hover {
-  background-color: #8f58fd;
-  box-shadow: rgba(255, 255, 255, 0.25) 0px 1px 1px, rgba(255, 255, 255, 0.13) 0px 0px 1px 1px;
-
-  .item-text {
-    color: white;
+/* 背景浮动装饰 */
+.decoration-circle {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  z-index: 0;
+  animation: float 10s infinite ease-in-out alternate;
+}
+.circle-1 {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(
+    circle,
+    rgba(142, 114, 247, 0.4) 0%,
+    rgba(0, 0, 0, 0) 70%
+  );
+  top: -100px;
+  left: -100px;
+}
+.circle-2 {
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(
+    circle,
+    rgba(247, 94, 2, 0.3) 0%,
+    rgba(0, 0, 0, 0) 70%
+  );
+  bottom: -50px;
+  right: -50px;
+  animation-delay: -5s;
+}
+@keyframes float {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(30px, -30px);
   }
 }
 
-.itembutton {
-  margin-left: 10px;
-}
-
-.qianimage {
-  width: 25px;
-  height: 18px;
-  margin: 0 3px;
-}
-
-.containerright {
-  margin-top: 1.25rem;
-  background-color: #f8f8f8;
-  box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgb(209, 213, 219) 0px 0px 0px 1px inset;
-}
-
-.navbar {
+/* 内容容器 */
+.glass-content {
+  position: relative;
+  z-index: 1;
   display: flex;
-  align-items: center;
-  background-color: #FFF;
-  padding: 10px;
-  border-radius: 5px;
-  margin-top: 10px;
+  flex-direction: column;
+  height: 100%;
+  padding: 20px 30px;
+  box-sizing: border-box;
+  gap: 20px;
 }
 
-.navbar button {
-  background-color: #f8f8f8;
-  border: none;
-  padding: 10px 20px;
-  margin: 0 5px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-.navbar button.active {
-  background-color: #4caf50;
-  color: white;
-  margin-left: 1rem;
-}
-
-.navbar input[type="text"] {
-  padding: 10px;
-  margin-left: auto;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 16px;
-}
-
-.navbar input[type="text"]::placeholder {
-  color: #ccc;
-}
-
-.navbar input[type="text"]:focus {
-  outline: none;
-  border-color: #4caf50;
-}
-
-.navbar input[type="text"]+button {
-  background: none;
-  border: none;
-  padding: 0;
-  margin: 0 0 0 5px;
-  cursor: pointer;
-}
-
-.navbar input[type="text"]+button:before {
-  content: "🔍";
-  font-size: 18px;
-}
-
-.container {
-  width: 20rem;
-  height: 35rem;
-  padding: 0 1.25rem;
-  background-color: #FFF;
-  box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgb(209, 213, 219) 0px 0px 0px 1px inset;
-  overflow: overlay;
-}
-
-.item {
+/* --- 1. 导航栏样式 --- */
+.navbar-glass {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #e0e0e0;
-  padding: 10px 0;
-}
-
-.item .icon {
-  width: 32px;
-  height: 32px;
-  margin-right: 10px;
-}
-
-.divicon-table {
-  display: flex;
   align-items: center;
-}
+  padding: 15px 25px;
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 
-.icon-table {
-  width: 1rem;
-  height: 1rem;
-  margin-right: 5px;
-}
+  .nav-left {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+  }
 
-.item-text {
-  // flex: 1;
-  // color: black;
-  color: #7c1df1;
-}
+  .input-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 
-
-.item-span {
-  font-size: 14px;
-  font-weight: bold;
-}
-
-.item-actions {
-  display: flex;
-  align-items: center;
-  justify-content: space-evenly
-}
-
-:deep(.el-input__inner) {
-  color: #f75e02;
-}
-
-:deep(.shulianginput .el-input__inner) {
-  color: rgb(123, 141, 64);
-}
-
-:deep(.navbar .el-input__inner) {
-  color: rgb(59, 131, 255);
-}
-
-:deep(.nameArticle .el-input__inner) {
-  color: #7c1df1;
-}
-
-.profit-summary {
-  display: flex;
-  align-items: center;
-  margin-left: 4rem;
-  
-  .label {
-    font-weight: 600;
-    margin-right: 0.5rem;
+    .label-text {
+      font-weight: 600;
+      color: #555;
+      font-size: 14px;
+    }
   }
 }
 
-.profit-positive {
-  color: #f75e02;
+/* 利润卡片 */
+.profit-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  padding: 8px 20px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.9);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  &.is-positive {
+    .profit-value {
+      color: #f75e02;
+    }
+    &:hover {
+      border-color: rgba(247, 94, 2, 0.2);
+    }
+  }
+
+  .profit-label {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 2px;
+  }
+
+  .profit-value {
+    font-size: 20px;
+    font-weight: 800;
+    font-family: 'DIN Alternate', 'Helvetica Neue', sans-serif;
+    color: #67c23a; /* Default to green/neutral if negative logic applies */
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
 }
 
-.profit-negative {
+/* --- 2. 表格样式 (深度定制 Element Plus) --- */
+.table-container {
+  flex: 1;
+  border-radius: 16px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.03);
+  padding: 10px;
+}
+
+/* 穿透修改 Element 表格变量 */
+:deep(.el-table) {
+  --el-table-bg-color: transparent !important;
+  --el-table-tr-bg-color: transparent !important;
+  --el-table-header-bg-color: rgba(255, 255, 255, 0.5) !important;
+  --el-table-row-hover-bg-color: rgba(255, 255, 255, 0.7) !important;
+  --el-table-border-color: rgba(0, 0, 0, 0.05);
+
+  background-color: transparent !important;
+
+  th.el-table__cell {
+    background-color: rgba(255, 255, 255, 0.5) !important;
+    color: #606266;
+    font-weight: 600;
+  }
+}
+
+/* 物品单元格 */
+.item-cell {
+  display: flex;
+  align-items: center;
+
+  .icon-wrapper {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-right: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .item-name {
+    font-weight: 600;
+    color: #7c1df1;
+  }
+}
+
+/* 价格与文字颜色 */
+.price-text {
+  color: #f75e02;
+  font-weight: 500;
+  font-family: 'DIN', sans-serif;
+}
+
+.cost-text {
+  color: #606266;
+  font-family: 'DIN', sans-serif;
+}
+
+.profit-text {
+  font-weight: 700;
+  font-family: 'DIN', sans-serif;
+}
+.text-gain {
+  color: #f75e02;
+}
+.text-loss {
   color: #67c23a;
+}
+
+.stock-high {
+  color: #67c23a;
+}
+.stock-low {
+  color: #f56c6c;
+}
+
+.time-text {
+  color: #909399;
+  font-size: 13px;
+}
+
+/* 操作按钮 */
+.action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.delete-btn {
+  padding: 4px;
+  font-size: 16px;
+
+  &:hover {
+    background-color: #fee;
+    border-radius: 4px;
+  }
+}
+
+/* --- 3. 弹窗样式 --- */
+:deep(.glass-dialog) {
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+
+  .el-dialog__header {
+    margin-right: 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  }
+
+  .el-dialog__body {
+    padding: 20px;
+    text-align: center;
+  }
+}
+
+.dialog-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+
+  .warning-icon {
+    font-size: 40px;
+    color: #f56c6c;
+    margin-bottom: 5px;
+  }
+
+  p {
+    font-size: 16px;
+    color: #303133;
+    margin: 0;
+  }
+
+  .sub-tip {
+    font-size: 12px;
+    color: #909399;
+  }
+}
+
+/* 滚动条美化 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
 }
 </style>

@@ -1,3 +1,2 @@
-VITE_BASE_URL= "https://jx.ieoog.com/jx3"
-VITE_BASE_URLBOOK = "https://gbapi.ieoog.com"
-VITE_COOKIE_URL=".ieoog.com"
+VITE_SUPABASE_URL="https://yxlbpimhiadnjeepvlwu.supabase.co"
+VITE_SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4bGJwaW1oaWFkbmplZXB2bHd1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ3NzU4NTMsImV4cCI6MjA4MDM1MTg1M30.ocxihliRbbdVT0cad0ncjIr-yPvSThW0UuCLVCDCv7s"

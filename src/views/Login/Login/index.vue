@@ -183,8 +183,7 @@
 import { ref, reactive, watch } from 'vue';
 import { ElMessage } from 'element-plus';
 import { Message, Lock } from '@element-plus/icons-vue'; // 显式导入图标，防止未配置自动导入导致显示空白
-import supabase from '@/utils/supabase/supabase';
-import router from '@/router';
+import { supabase } from '@/utils/supabase/supabase';
 
 const currentModule = ref('login');
 const isLoading = ref(false); // 添加加载状态，增强交互感
@@ -234,17 +233,13 @@ watch(currentModule, () => {
 // --- 模拟 API 请求的延时函数 ---
 const mockApi = () => new Promise((resolve) => setTimeout(resolve, 1500));
 
-// --- 登录 ---
+// --- 处理函数 ---
 const handleLogin = async (formEl) => {
   if (!formEl) return;
   await formEl.validate(async (valid) => {
     if (valid) {
       isLoading.value = true;
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: loginForm.email,
-        password: loginForm.password,
-      });
-      router.push('js3book');
+      await mockApi(); // 模拟网络请求
       isLoading.value = false;
       ElMessage.success('欢迎回来！登录成功');
     }
@@ -256,14 +251,10 @@ const register = async () => {
     email: registerForm.email,
     password: registerForm.password,
   });
-  console.log(data, error);
-
   if (error) {
-    ElMessage.success('注册失败：', error.message);
+    console.log('注册失败：', error.message);
   } else {
-    isLoading.value = false;
-    currentModule.value = 'login';
-    ElMessage.success('注册成功！');
+    console.log('注册成功：', data);
   }
 };
 const handleRegister = async (formEl) => {
@@ -272,6 +263,9 @@ const handleRegister = async (formEl) => {
     if (valid) {
       isLoading.value = true;
       await register();
+      isLoading.value = false;
+      ElMessage.success('注册成功！已为您自动登录');
+      currentModule.value = 'login';
     }
   });
 };
@@ -289,7 +283,7 @@ const handleForgot = async (formEl) => {
 };
 </script>
 
-<style scoped lang="less">
+<style scoped>
 /* 1. 布局与动态背景 */
 .auth-container {
   position: relative;
@@ -307,14 +301,14 @@ const handleForgot = async (formEl) => {
 .decoration-circle {
   position: absolute;
   border-radius: 50%;
-  filter: blur(2.5rem); /* 高斯模糊实现柔和光晕 */
+  filter: blur(40px); /* 高斯模糊实现柔和光晕 */
   z-index: 0;
   animation: float 10s infinite ease-in-out alternate;
 }
 
 .circle-1 {
-  width: 18.75rem;
-  height: 18.75rem;
+  width: 300px;
+  height: 300px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   top: 10%;
   left: 20%;
@@ -322,8 +316,8 @@ const handleForgot = async (formEl) => {
 }
 
 .circle-2 {
-  width: 15.625rem;
-  height: 15.625rem;
+  width: 250px;
+  height: 250px;
   background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
   bottom: 15%;
   right: 20%;
@@ -336,7 +330,7 @@ const handleForgot = async (formEl) => {
     transform: translateY(0) translateX(0);
   }
   100% {
-    transform: translateY(-2.5rem) translateX(1.875rem);
+    transform: translateY(-40px) translateX(30px);
   }
 }
 
@@ -345,34 +339,34 @@ const handleForgot = async (formEl) => {
   position: relative;
   z-index: 1;
   width: 100%;
-  max-width: 26.25rem;
-  padding: 2.5rem;
+  max-width: 420px;
+  padding: 40px;
 
   /* Glassmorphism 核心代码 */
   background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(1.25rem); /* 背景模糊 */
-  -webkit-backdrop-filter: blur(1.25rem);
-  border: 0.0625rem solid rgba(255, 255, 255, 0.6);
-  border-radius: 1.5rem;
-  box-shadow: 0 0.5rem 2rem 0 rgba(31, 38, 135, 0.15);
+  backdrop-filter: blur(20px); /* 背景模糊 */
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 24px;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
 }
 
 /* 标题区域 */
 .card-header {
   text-align: center;
-  margin-bottom: 1.875rem;
+  margin-bottom: 30px;
 }
 
 .title {
-  font-size: 1.75rem;
+  font-size: 28px;
   font-weight: 700;
   color: #2d3748;
-  margin: 0 0 0.625rem;
-  letter-spacing: 0.0313rem;
+  margin: 0 0 10px;
+  letter-spacing: 0.5px;
 }
 
 .subtitle {
-  font-size: 0.875rem;
+  font-size: 14px;
   color: #718096;
   margin: 0;
 }
@@ -381,34 +375,34 @@ const handleForgot = async (formEl) => {
 .glass-input :deep(.el-input__wrapper) {
   background-color: rgba(255, 255, 255, 0.5); /* 半透明背景 */
   box-shadow: none; /* 移除默认边框 */
-  border-radius: 0.75rem;
-  padding: 0.5rem 0.9375rem;
-  border: 0.0625rem solid rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
+  padding: 8px 15px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
 }
 
 .glass-input :deep(.el-input__wrapper:hover),
 .glass-input :deep(.el-input__wrapper.is-focus) {
   background-color: #fff;
-  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.05); /* 聚焦时浮起 */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* 聚焦时浮起 */
   border-color: #667eea;
 }
 
 /* 4. 按钮美化 */
 .submit-btn {
   width: 100%;
-  height: 2.75rem;
-  font-size: 1rem;
+  height: 44px;
+  font-size: 16px;
   font-weight: 600;
-  border-radius: 0.75rem;
+  border-radius: 12px;
   border: none;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .submit-btn:hover {
-  transform: translateY(-0.125rem); /* 悬停上浮 */
-  box-shadow: 0 0.375rem 0.9375rem rgba(118, 75, 162, 0.4);
+  transform: translateY(-2px); /* 悬停上浮 */
+  box-shadow: 0 6px 15px rgba(118, 75, 162, 0.4);
   opacity: 0.95;
 }
 
@@ -417,7 +411,7 @@ const handleForgot = async (formEl) => {
 }
 
 .register-btn:hover {
-  box-shadow: 0 0.375rem 0.9375rem rgba(79, 172, 254, 0.4);
+  box-shadow: 0 6px 15px rgba(79, 172, 254, 0.4);
 }
 
 .forgot-btn {
@@ -429,8 +423,8 @@ const handleForgot = async (formEl) => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 1.25rem;
-  font-size: 0.875rem;
+  margin-top: 20px;
+  font-size: 14px;
 }
 
 .center-switch {
@@ -468,12 +462,12 @@ a:hover {
 
 .slide-fade-enter-from {
   opacity: 0;
-  transform: translateX(1.25rem);
+  transform: translateX(20px);
 }
 
 .slide-fade-leave-to {
   opacity: 0;
-  transform: translateX(-1.25rem);
+  transform: translateX(-20px);
 }
 
 /* 简单淡入淡出 */

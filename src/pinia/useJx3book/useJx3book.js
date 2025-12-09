@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import {get, post} from '@/utils/http/httpbook'
 import util from '@/utils/util';
 
 export const useJx3book = defineStore('tableData', {
