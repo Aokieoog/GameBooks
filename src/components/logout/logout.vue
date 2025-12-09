@@ -1,7 +1,10 @@
 <template>
   <div class="profile-menu" ref="menuWrapper">
     <div class="avatar" @click="toggleMenu">
-      <img src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" alt="头像" />
+      <img
+        src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
+        alt="头像"
+      />
     </div>
     <transition name="fade">
       <ul v-if="menuVisible" class="menu">
@@ -16,7 +19,6 @@
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 import util from '@/utils/util.js';
 import router from '@/router';
-import Eln from '@/utils/Eln';
 const menuVisible = ref(false);
 const menuWrapper = ref(null);
 
@@ -40,16 +42,15 @@ onBeforeUnmount(() => {
 });
 
 const logout = () => {
-  Eln.success("退出成功");
-  util.removeCookie('access_tokenbook','/','ieoog.com');
-  util.removeCookie('userid','/','ieoog.com');
+  util.removeCookie('access_tokenbook', '/', 'ieoog.com');
+  util.removeCookie('userid', '/', 'ieoog.com');
   setTimeout(() => {
     router.push('/');
   }, 1000);
 };
 
 const changePassword = () => {
-  alert("跳转到修改密码页面！");
+  alert('跳转到修改密码页面！');
   // 添加修改密码逻辑
 };
 </script>

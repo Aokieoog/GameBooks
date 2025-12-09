@@ -69,8 +69,6 @@
 import { ref, defineProps } from 'vue';
 import PriceInput from '@/components/PriceInput/PriceInput.vue';
 import util from '@/utils/util.js';
-import { useJx3book } from '@/pinia/useJx3book/useJx3book';
-import Eln from '@/utils/Eln';
 
 const Jx3Store = useJx3book();
 const tosellData = ref([]);
@@ -89,7 +87,7 @@ const props = defineProps({
 // 添加出售数据
 const addSoldOrders = util.throttle(async (data) => {
   if (!data.jin && !data.yin && !data.tong) {
-    return Eln.error('请填写价格');
+    console.log('1');
   }
   const res = await post('/api/order/sell', {
     orderId: props.sellPriceprops,
@@ -103,9 +101,9 @@ const addSoldOrders = util.throttle(async (data) => {
   if (res.data.code == 200) {
     getSoldOrders();
     Jx3Store.orderInquiry();
-    Eln.success('添加成功');
+    ElMessage.success('添加成功');
   } else {
-    Eln.error(res.data.message);
+    ElMessage.error(res.data.message);
   }
 }, 1000);
 
@@ -138,7 +136,7 @@ const deleteSoldOrders = async (id, stok) => {
   if (res.status === 200) {
     Jx3Store.orderInquiry(); // 主表格刷新
     getSoldOrders();
-    Eln.success('删除成功');
+    ElMessage.success('删除成功');
   }
 };
 </script>

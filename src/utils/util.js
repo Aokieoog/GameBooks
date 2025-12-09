@@ -14,16 +14,6 @@ export default {
     document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${path}; domain=${domain};`;
   },
 
-generateToken() {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-  let tokens = ''
-  for (let i = 0; i < 128; i++) {
-    const index = Math.floor(Math.random() * chars.length)
-    tokens += chars[index]
-  }
-  return tokens
-},
-
 // 格式化时间戳秒级
 formatDate(timestamp) {
   const date = new Date(timestamp);  // 将毫秒级时间戳转换为日期

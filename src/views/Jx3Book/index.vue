@@ -4,47 +4,12 @@
     <div class="decoration-circle circle-2"></div>
 
     <div class="glass-content">
-      <div class="navbar-glass">
-        <div class="nav-left">
-          <div class="input-group">
-            <span class="label-text">物品名</span>
-            <Search
-              class="custom-search"
-              @handleSelect="handleSelect"
-              :fetch-cities="fetchCities"
-            ></Search>
-          </div>
-          <div class="input-group">
-            <PriceInput @addForSale="handleAddForSale" />
-          </div>
-        </div>
-
-        <div class="nav-right">
-          <div
-            class="profit-card"
-            :class="{ 'is-positive': totalProfit > 0 }"
-            @click="profitShow = !profitShow"
-          >
-            <div class="profit-label">
-              {{ profitShow ? '税前总利润' : '税后总利润' }}
-            </div>
-            <div class="profit-value">
-              <el-icon v-if="totalProfit > 0"><Top /></el-icon>
-              <el-icon v-else><Bottom /></el-icon>
-              {{
-                profitShow
-                  ? util.numPad(totalProfit)
-                  : util.numPad(totalProfit * 0.95)
-              }}
-            </div>
-          </div>
-        </div>
-      </div>
+      <Jx3Title></Jx3Title>
 
       <div class="table-container">
         <el-table
           ref="table"
-          :data="sortedTableData"
+          :data="sortedmockTableData"
           :height="tableHeight"
           style="width: 100%"
           class="glass-table"
@@ -206,49 +171,26 @@
 
 <script setup>
 import { ref, reactive, onMounted, computed, onBeforeUnmount } from 'vue';
-import { storeToRefs } from 'pinia';
-import { useJx3book } from '@/pinia/useJx3book/useJx3book';
 import Search from '@/components/search/Search.vue';
 import PriceInput from '@/components/PriceInput/PriceInput.vue';
 import util from '@/utils/util.js';
 import SellOrder from '@/components/sellOrder/sellOrder.vue';
-import Eln from '@/utils/Eln';
 import { Top, Bottom, Delete, WarningFilled } from '@element-plus/icons-vue'; // 引入图标
+import Jx3Title from './components/Jx3Title.vue';
 
-const Jx3Store = useJx3book();
-const { tableData } = storeToRefs(Jx3Store);
 const selectedCity = ref('');
 const profitShow = ref(false);
 
 const tableHeight = ref(500); // 初始值
 const visible = ref(false);
 const orderId = ref('');
-const totalSelling = ref(0);
-
-onMounted(() => {
-  Jx3Store.orderInquiry();
-  updateTableHeight();
-  window.addEventListener('resize', updateTableHeight);
-});
-
-onBeforeUnmount(() => {
-  window.removeEventListener('resize', updateTableHeight);
-});
-
-// 调整高度计算逻辑，留出头部和padding的空间
-const updateTableHeight = () => {
-  const windowHeight = window.innerHeight;
-  // padding = navbar height + margins + padding bottom
-  const padding = 140;
-  tableHeight.value = windowHeight - padding;
-};
 
 //时间排序
-const sortedTableData = computed(() => {
-  return tableData.value
-    .slice()
-    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-});
+// const sortedmockTableData = computed(() => {
+//   return mockTableData.value
+//     .slice()
+//     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+// });
 
 const handleSelect = (city) => {
   selectedCity.value = city;
@@ -258,15 +200,15 @@ const handleSelect = (city) => {
 const handleAddForSale = util.throttle(async (sellPrice) => {
   const userId = util.getCookie('userid');
   if (!selectedCity.value.itemId) {
-    return Eln.error('请选择物品');
+    return ElMessage.error('请选择物品');
   } else if (!sellPrice.jin && !sellPrice.yin && !sellPrice.tong) {
-    return Eln.error('请填写价格');
+    return ElMessage.error('请填写价格');
   }
   try {
     Object.assign(sellPrice, { itemId: selectedCity.value.itemId, userId });
     const response = await post('/api/orders', sellPrice);
     if (response.data.code === 200) {
-      Eln.success('添加成功');
+      ElMessage.success('添加成功');
       Jx3Store.orderInquiry();
     }
   } catch (error) {
@@ -279,11 +221,11 @@ const deleteOrder = async () => {
   try {
     const response = await DELETE('/api/delorders/', { id: orderId.value });
     Jx3Store.orderInquiry();
-    Eln.success('删除成功');
+    ElMessage.success('删除成功');
     visible.value = false;
     return response.data;
   } catch (error) {
-    Eln.error('删除失败');
+    ElMessage.error('删除失败');
     return [];
   }
 };
@@ -299,12 +241,12 @@ function unitPrice(jin, yin, tong) {
 }
 
 // 添加总利润计算
-const totalProfit = computed(() => {
-  return tableData.value.reduce((sum, item) => {
-    const orderProfit = item.orderTotalRevenue - item.totalValue;
-    return sum + orderProfit;
-  }, 0);
-});
+// const totalProfit = computed(() => {
+//   return mockTableData.value.reduce((sum, item) => {
+//     const orderProfit = item.orderTotalRevenue - item.totalValue;
+//     return sum + orderProfit;
+//   }, 0);
+// });
 
 // ... 保留你原有的 import ...
 
@@ -406,16 +348,14 @@ onMounted(() => {
   // 原来的逻辑: Jx3Store.orderInquiry()
 
   // 修改为：直接注入假数据到 Store (或者直接赋值给 computed 所依赖的变量)
-  // 假设 storeToRefs 出来的 tableData 是可写的，或者我们直接修改 Store
+  // 假设 storeToRefs 出来的 mockTableData 是可写的，或者我们直接修改 Store
   // 如果不能直接修改 Store，你可以临时创建一个本地 ref 来展示效果
 
   // 强制覆盖 Store 中的数据用于展示 (模拟 API 返回)
-  tableData.value = mockTableData;
-
   updateTableHeight();
   window.addEventListener('resize', updateTableHeight);
 
-  Eln.success('已加载演示数据'); // 提示一下
+  ElMessage.success('已加载演示数据'); // 提示一下
 });
 
 // --- 🔍 修改搜索函数 fetchCities 使用假数据 ---
@@ -443,9 +383,9 @@ const fetchCities = async (query) => {
 const deleteOrder = async () => {
    visible.value = false;
    // 模拟前端删除
-   const index = tableData.value.findIndex(item => item.orderId === orderId.value);
-   if (index !== -1) tableData.value.splice(index, 1);
-   Eln.success('模拟删除成功');
+   const index = mockTableData.value.findIndex(item => item.orderId === orderId.value);
+   if (index !== -1) mockTableData.value.splice(index, 1);
+   ElMessage.success('模拟删除成功');
 };
 */
 </script>
@@ -512,82 +452,6 @@ const deleteOrder = async () => {
   padding: 20px 30px;
   box-sizing: border-box;
   gap: 20px;
-}
-
-/* --- 1. 导航栏样式 --- */
-.navbar-glass {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 25px;
-  background: rgba(255, 255, 255, 0.65);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-
-  .nav-left {
-    display: flex;
-    align-items: center;
-    gap: 25px;
-  }
-
-  .input-group {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-
-    .label-text {
-      font-weight: 600;
-      color: #555;
-      font-size: 14px;
-    }
-  }
-}
-
-/* 利润卡片 */
-.profit-card {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  padding: 8px 20px;
-  background: rgba(255, 255, 255, 0.5);
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border: 1px solid transparent;
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.9);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  }
-
-  &.is-positive {
-    .profit-value {
-      color: #f75e02;
-    }
-    &:hover {
-      border-color: rgba(247, 94, 2, 0.2);
-    }
-  }
-
-  .profit-label {
-    font-size: 12px;
-    color: #888;
-    margin-bottom: 2px;
-  }
-
-  .profit-value {
-    font-size: 20px;
-    font-weight: 800;
-    font-family: 'DIN Alternate', 'Helvetica Neue', sans-serif;
-    color: #67c23a; /* Default to green/neutral if negative logic applies */
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
 }
 
 /* --- 2. 表格样式 (深度定制 Element Plus) --- */

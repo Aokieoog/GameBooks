@@ -10,10 +10,6 @@ import router from './router/index.js'
 import './assets/globals.css'
 /* Animate-css动画库 */
 import './assets/animate.css'
-/* Svg图标全局注册组件 */
-import SvgIcon from './components/svgIconFont/svgIcon.vue'
-import './assets/svgIconFont/svgIconFont'
-/* message */
 /* echarts */
 import * as echarts from 'echarts'
 import { createPinia } from 'pinia'
@@ -31,6 +27,4 @@ app.config.globalProperties.$echarts = echarts
 app.use(router)
 app.use(ElementPlus)
 app.use(pinia)
-app.component('SvgIcon', SvgIcon)
-
 router.isReady().then(() => app.mount('#app'))

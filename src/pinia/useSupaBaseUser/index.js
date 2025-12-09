@@ -2,7 +2,7 @@
 // 会保存 supabase 的 session 和 user
 
 import { defineStore } from 'pinia';
-import supabase from '@/utils/supabase/supabase';
+import supabase from '@/utils/SupaBase/supabase';
 
 export const useUserStore = defineStore('user', {
   state: () => ({
