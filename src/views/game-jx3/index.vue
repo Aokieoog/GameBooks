@@ -171,10 +171,10 @@
 
 <script setup>
 import { ref, reactive, onMounted, computed, onBeforeUnmount } from 'vue';
-import Search from '@/components/search/Search.vue';
-import PriceInput from '@/components/PriceInput/PriceInput.vue';
+import { ElMessage } from 'element-plus';
 import util from '@/utils/util.js';
 import SellOrder from '@/components/sellOrder/sellOrder.vue';
+import supabase from '@/utils/supabase/supabase';
 import { Top, Bottom, Delete, WarningFilled } from '@element-plus/icons-vue'; // 引入图标
 import Jx3Title from './components/Jx3Title.vue';
 
@@ -191,30 +191,6 @@ const orderId = ref('');
 //     .slice()
 //     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 // });
-
-const handleSelect = (city) => {
-  selectedCity.value = city;
-};
-
-// 添加订单
-const handleAddForSale = util.throttle(async (sellPrice) => {
-  const userId = util.getCookie('userid');
-  if (!selectedCity.value.itemId) {
-    return ElMessage.error('请选择物品');
-  } else if (!sellPrice.jin && !sellPrice.yin && !sellPrice.tong) {
-    return ElMessage.error('请填写价格');
-  }
-  try {
-    Object.assign(sellPrice, { itemId: selectedCity.value.itemId, userId });
-    const response = await post('/api/orders', sellPrice);
-    if (response.data.code === 200) {
-      ElMessage.success('添加成功');
-      Jx3Store.orderInquiry();
-    }
-  } catch (error) {
-    console.error('Error:', error);
-  }
-}, 1000);
 
 // 删除订单
 const deleteOrder = async () => {
@@ -344,26 +320,21 @@ const mockSearchResults = [
 
 onMounted(() => {
   ElMessage.success('已加载演示数据'); // 提示一下
+  fetchData();
 });
+async function fetchData() {
+  const { data, error } = await supabase
+    .from('gamebook_jx3_icon') // 换成你的表名
+    .select('*') // 查询全部字段
+    .eq('name', '牡丹'); // 只查询物品类别
 
-// --- 🔍 修改搜索函数 fetchCities 使用假数据 ---
-
-const fetchCities = async (query) => {
-  // 模拟网络延迟
-  await new Promise((resolve) => setTimeout(resolve, 500));
-
-  // 简单的模糊匹配
-  if (!query) return [];
-  const results = mockSearchResults.filter(
-    (item) => item.name.includes(query) || '五行石'.includes(query),
-  ); // 为了演示，默认返回一些
-
-  return results.map((item) => ({
-    name: item.name,
-    iconID: item.iconID,
-    itemId: item._id,
-  }));
-};
+  // 如果有错误，打印出来
+  if (error) {
+    console.error('查表出错了 >_<: ', error);
+    return;
+  }
+  console.log(data);
+}
 
 // ⚠️ 注意：原来的 addForSale 和 deleteOrder 会因为没有真实后端报错
 // 建议把它们也改成打印 console.log 即可，例如：

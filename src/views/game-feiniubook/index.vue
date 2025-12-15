@@ -457,13 +457,13 @@
 <script setup>
 import { post, get, patch, DELETE } from '@/utils/http/http';
 import { ref, reactive, onMounted, computed } from 'vue';
-import { Cookie } from '@/utils/cookie.js';
+// import { Cookie } from '@/utils/cookie.js';
 import util from '@/utils/util.js';
-import { useJxwg } from '@/pinia/useJx3book/userJxwg.js';
-import { storeToRefs } from 'pinia';
+// import { useJxwg } from '@/pinia/useJx3book/userJxwg.js';
+// import { storeToRefs } from 'pinia';
 import ElMessage from 'element-plus';
-const store = useJxwg();
-const { tableDatakcs, tableDatascs } = storeToRefs(store);
+// const store = useJxwg();
+// const { tableDatakcs, tableDatascs } = storeToRefs(store);
 
 const dialogVisible = ref(false);
 const dialogVisibleb = ref(false);
@@ -557,25 +557,25 @@ async function Zhuceq() {
   }
 }
 // 登录
-async function Login() {
-  localStorage.setItem('username', form.mail);
-  localStorage.setItem('password', form.password);
-  let data = {
-    username: form.mail,
-    password: form.password,
-  };
-  let restoken = await post('/user/token', data, {
-    headers: {
-      'Content-type': 'application/x-www-form-urlencoded',
-    },
-  });
-  if (restoken.status === 200) {
-    dialogVisible.value = false;
-    Cookie(restoken.data.access_token);
-    Mystocks();
-    restaurants.value = await loadAll();
-  }
-}
+// async function Login() {
+//   localStorage.setItem('username', form.mail);
+//   localStorage.setItem('password', form.password);
+//   let data = {
+//     username: form.mail,
+//     password: form.password,
+//   };
+//   let restoken = await post('/user/token', data, {
+//     headers: {
+//       'Content-type': 'application/x-www-form-urlencoded',
+//     },
+//   });
+//   if (restoken.status === 200) {
+//     dialogVisible.value = false;
+//     Cookie(restoken.data.access_token);
+//     Mystocks();
+//     restaurants.value = await loadAll();
+//   }
+// }
 // 找回密码
 async function FindPassword() {
   let data = {
@@ -605,40 +605,40 @@ function logout() {
   // router.go(0); // 刷新当前页面
 }
 // 我的列表
-async function Mystocks(params) {
-  let token = util.getCookie('access_token');
-  if (token) {
-    loginshow.value = true;
-  } else {
-    return ElMessage.success('请先登录');
-  }
-  let resmystocks = await get('/stock/mystocks');
-  const tableDatakc = resmystocks.data.filter((item) => item.sale == 0);
-  const tableDatasc = resmystocks.data.filter((item) => item.sale == 1);
-  // 预期利润
-  sumtasc.value = tableDatakc.reduce((sum, item) => {
-    if (item.sale === 0) {
-      return sum + item.quantity * (item.wblprice - item.cost);
-    }
-    return sum;
-  }, 0);
-  // 已获利润
-  sumtakc.value = tableDatasc.reduce((sum, item) => {
-    if (item.sale === 1) {
-      return sum + item.quantity * (item.saleprice - item.cost);
-    }
-    return sum;
-  }, 0);
-  // 库存成本
-  sumta.value = tableDatakc.reduce((sum, item) => {
-    if (item.sale === 0) {
-      return sum + item.quantity * item.cost;
-    }
-    return sum;
-  }, 0);
-  store.tableDatakcs = tableDatakc;
-  store.tableDatascs = tableDatasc;
-}
+// async function Mystocks(params) {
+//   let token = util.getCookie('access_token');
+//   if (token) {
+//     loginshow.value = true;
+//   } else {
+//     return ElMessage.success('请先登录');
+//   }
+//   let resmystocks = await get('/stock/mystocks');
+//   const tableDatakc = resmystocks.data.filter((item) => item.sale == 0);
+//   const tableDatasc = resmystocks.data.filter((item) => item.sale == 1);
+//   // 预期利润
+//   sumtasc.value = tableDatakc.reduce((sum, item) => {
+//     if (item.sale === 0) {
+//       return sum + item.quantity * (item.wblprice - item.cost);
+//     }
+//     return sum;
+//   }, 0);
+//   // 已获利润
+//   sumtakc.value = tableDatasc.reduce((sum, item) => {
+//     if (item.sale === 1) {
+//       return sum + item.quantity * (item.saleprice - item.cost);
+//     }
+//     return sum;
+//   }, 0);
+//   // 库存成本
+//   sumta.value = tableDatakc.reduce((sum, item) => {
+//     if (item.sale === 0) {
+//       return sum + item.quantity * item.cost;
+//     }
+//     return sum;
+//   }, 0);
+//   store.tableDatakcs = tableDatakc;
+//   store.tableDatascs = tableDatasc;
+// }
 // 出售
 function Chushou(params) {
   dialogVisibleb.value = true;

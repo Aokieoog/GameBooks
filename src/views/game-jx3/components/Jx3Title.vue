@@ -3,11 +3,11 @@
     <div class="nav-left">
       <div class="input-group">
         <span class="label-text">物品名</span>
-        <Search
+        <Jx3Search
           class="custom-search"
           @handleSelect="handleSelect"
           :fetch-cities="fetchCities"
-        ></Search>
+        ></Jx3Search>
       </div>
       <div class="input-group">
         <PriceInput @addForSale="handleAddForSale" />
@@ -39,13 +39,55 @@
 
 <script setup>
 import util from '@/utils/util.js';
-import Search from './components/Search.vue';
-import PriceInput from './components/PriceInput.vue';
+import Jx3Search from './Jx3Search.vue';
+import PriceInput from '@/components/PriceInput/PriceInput.vue';
 import { ElMessage } from 'element-plus';
 import { Top, Bottom } from '@element-plus/icons-vue';
 import { ref } from 'vue';
 
 const variable = ref(null); // 示例变量
+
+const handleSelect = (city) => {
+  selectedCity.value = city;
+};
+
+const fetchCities = async (query) => {
+  // 模拟网络延迟
+  await new Promise((resolve) => setTimeout(resolve, 500));
+
+  // 简单的模糊匹配
+  if (!query) return [];
+
+  // const results = mockSearchResults.filter(
+  //   (item) => item.name.includes(query) || '五行石'.includes(query),
+  // ); // 为了演示，默认返回一些
+
+  // return results.map((item) => ({
+  //   name: item.name,
+  //   iconID: item.iconID,
+  //   itemId: item._id,
+  // }));
+};
+
+// 添加订单
+const handleAddForSale = util.throttle(async (sellPrice) => {
+  const userId = util.getCookie('userid');
+  if (!selectedCity.value.itemId) {
+    return ElMessage.error('请选择物品');
+  } else if (!sellPrice.jin && !sellPrice.yin && !sellPrice.tong) {
+    return ElMessage.error('请填写价格');
+  }
+  try {
+    Object.assign(sellPrice, { itemId: selectedCity.value.itemId, userId });
+    const response = await post('/api/orders', sellPrice);
+    if (response.data.code === 200) {
+      ElMessage.success('添加成功');
+      Jx3Store.orderInquiry();
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}, 1000);
 </script>
 
 <style scoped lang="scss">

@@ -38,6 +38,15 @@ const routes = [
     },
     component: () => import('@/views/game-feiniubook/index.vue'),
   },
+  {
+    path: '/tools',
+    name: 'tools',
+    meta: {
+      fullPageDisplay: false,
+      title: '剑网三工具箱',
+    },
+    component: () => import('@/views/game-jx3/components/Jx3AddFrom.vue'),
+  },
   // 正确的通配 404
   {
     path: '/:pathMatch(.*)*',
@@ -55,29 +64,20 @@ const router = createRouter({
   routes,
 });
 
-// 🟣 路由守卫（推荐写法）
 router.beforeEach(async (to, from, next) => {
   const userStore = useUserStore();
-
   await userStore.init();
-
   const user = userStore.user;
-
-  // 设置标题
   if (to.meta.title) {
     document.title = to.meta.title;
   }
-
   // 不需要登录的路径
   const publicPages = ['/', '/jx3home'];
-
   const authRequired = !publicPages.includes(to.path);
 
-  // ✔ 已登录 → 尝试去登录页 → 自动跳回首页
   if (user && to.path === '/') {
     return next('/js3book');
   }
-  // ✔ 需要登录但是未登录 → 跳到登录
   if (authRequired && !user) {
     return next({
       path: '/',
