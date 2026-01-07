@@ -8,6 +8,10 @@ const supabase = createClient(
       autoRefreshToken: true,
       persistSession: true,
       detectSessionInUrl: true,
+      // 👇 强制本地不要用 cookie 域
+      cookieOptions: {
+        domain: undefined,
+      },
     },
   },
 );
