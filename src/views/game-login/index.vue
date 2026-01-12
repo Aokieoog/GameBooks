@@ -195,7 +195,6 @@ const loginForm = reactive({ email: '', password: '' });
 
 const registerFormRef = ref(null);
 const registerForm = reactive({ email: '', password: '' });
-
 const forgotFormRef = ref(null);
 const forgotForm = reactive({ email: '' });
 
